@@ -1,0 +1,155 @@
+ INFO 20191106142930 - -- Incoming request from 127.0.0.1
+DEBUG 20191106142930 - [wnu7tuphx8] Received request: {"send_response":false,"params":null,"tx_id":"wnu7tuphx8","operation":"GET_CURRENT_SESSIONS"}
+ INFO 20191106143247 - -- Incoming request from 127.0.0.1
+DEBUG 20191106143248 - [6199y9si5y] Received request: {"send_response":false,"params":null,"tx_id":"6199y9si5y","operation":"GET_CURRENT_SESSIONS"}
+ INFO 20191106143421 - -- Incoming request from 127.0.0.1
+DEBUG 20191106143421 - [3pz07mubu9] Received request: {"send_response":false,"params":null,"tx_id":"3pz07mubu9","operation":"GET_CURRENT_SESSIONS"}
+ INFO 20191106143736 - -- Incoming request from 127.0.0.1
+DEBUG 20191106143736 - [kefeo4fyzb] Received request: {"send_response":false,"params":null,"tx_id":"kefeo4fyzb","operation":"GET_CURRENT_SESSIONS"}
+ INFO 20191106144717 - -- Incoming request from 127.0.0.1
+DEBUG 20191106144718 - [4tj8zu5o3h] Received request: {"send_response":false,"params":null,"tx_id":"4tj8zu5o3h","operation":"GET_CURRENT_SESSIONS"}
+ INFO 20191106145623 - -- Incoming request from 127.0.0.1
+DEBUG 20191106145623 - [m0sqxt5268] Received request: {"send_response":false,"params":null,"tx_id":"m0sqxt5268","operation":"GET_CURRENT_SESSIONS"}
+ INFO 20191106150208 - -- Incoming request from 127.0.0.1
+DEBUG 20191106150208 - [0c2yt3q6ry] Received request: {"send_response":false,"params":null,"tx_id":"0c2yt3q6ry","operation":"GET_CURRENT_SESSIONS"}
+ INFO 20191106150342 - -- Incoming request from 127.0.0.1
+DEBUG 20191106150342 - [ckk4gi0b6z] Received request: {"send_response":false,"params":null,"tx_id":"ckk4gi0b6z","operation":"GET_CURRENT_SESSIONS"}
+ INFO 20191106150437 - -- Incoming request from 127.0.0.1
+DEBUG 20191106150437 - [n7bga0okyq] Received request: {"send_response":false,"params":null,"tx_id":"n7bga0okyq","operation":"GET_CURRENT_SESSIONS"}
+ INFO 20191106151122 - -- Incoming request from 127.0.0.1
+DEBUG 20191106151123 - [0e45fgtabz] Received request: {"send_response":false,"params":null,"tx_id":"0e45fgtabz","operation":"GET_CURRENT_SESSIONS"}
+ INFO 20191106152218 - -- Incoming request from 127.0.0.1
+DEBUG 20191106152218 - [tcg9qohnb3] Received request: {"send_response":false,"params":{},"tx_id":"tcg9qohnb3","operation":"GET_CURRENT_SESSIONS"}
+DEBUG 20191106152218 - [tcg9qohnb3] Result: {"result":true,"tx_id":"tcg9qohnb3"}
+ INFO 20191106165650 - -- Incoming request from 127.0.0.1
+DEBUG 20191106165650 - [jej7bgu14q] Received request: {"send_response":false,"params":{"extension":"123","company_id":1},"tx_id":"jej7bgu14q","operation":"ADD_ACCOUNT"}
+DEBUG 20191106165650 - [jej7bgu14q] Result: {"result":true,"tx_id":"jej7bgu14q"}
+ INFO 20191106165739 - -- Incoming request from 127.0.0.1
+DEBUG 20191106165739 - [bsubqfnnlj] Received request: {"send_response":false,"params":{"extension":"123","company_id":1},"tx_id":"bsubqfnnlj","operation":"ADD_ACCOUNT"}
+DEBUG 20191106165739 - [bsubqfnnlj] Result: {"result":true,"tx_id":"bsubqfnnlj"}
+ INFO 20191106170007 - -- Incoming request from 127.0.0.1
+DEBUG 20191106170007 - [vrxl2n8tgn] Received request: {"send_response":false,"params":{"extension":"123","company_id":1},"tx_id":"vrxl2n8tgn","operation":"ADD_ACCOUNT"}
+DEBUG 20191106170007 - [vrxl2n8tgn] Result: {"result":true,"tx_id":"vrxl2n8tgn"}
+ INFO 20191106171514 - -- Incoming request from 127.0.0.1
+DEBUG 20191106171514 - [hmv8eectvc] Received request: {"send_response":false,"params":{"extension":"123","company_id":1},"tx_id":"hmv8eectvc","operation":"ADD_ACCOUNT"}
+DEBUG 20191106171514 - [hmv8eectvc] Result: {"result":true,"tx_id":"hmv8eectvc"}
+ INFO 20191106173603 - -- Incoming request from 127.0.0.1
+DEBUG 20191106173604 - [58qut32dyd] Received request: {"send_response":false,"params":{"password":"wj4rryf02nf","account":"18950286135"},"tx_id":"58qut32dyd","operation":"ADD_ACCOUNT"}
+DEBUG 20191106173604 - [58qut32dyd] Call file sent.
+DEBUG 20191106173604 - [58qut32dyd] Result: {"result":true,"tx_id":"58qut32dyd"}
+ INFO 20191106181422 - -- Incoming request from 127.0.0.1
+DEBUG 20191106181422 - [1ifoytc1u9] Received request: {"send_response":false,"params":{"account":"18950286135"},"tx_id":"1ifoytc1u9","operation":"GET_ACCOUNT"}
+DEBUG 20191106181422 - [1ifoytc1u9] Call file sent.
+DEBUG 20191106181422 - [1ifoytc1u9] Result: {"result":{"response":true},"tx_id":"1ifoytc1u9"}
+ INFO 20191106181553 - -- Incoming request from 127.0.0.1
+DEBUG 20191106181553 - [yg3gukjhgx] Received request: {"send_response":false,"params":{"account":"18950286135"},"tx_id":"yg3gukjhgx","operation":"GET_ACCOUNT"}
+DEBUG 20191106181553 - [yg3gukjhgx] Call file sent.
+DEBUG 20191106181553 - [yg3gukjhgx] Result: {"result":{"response":true},"tx_id":"yg3gukjhgx"}
+ INFO 20191106181807 - -- Incoming request from 127.0.0.1
+DEBUG 20191106181808 - [ceu3erz8v1] Received request: {"send_response":false,"params":{"account":"18950286135"},"tx_id":"ceu3erz8v1","operation":"GET_ACCOUNT"}
+DEBUG 20191106181808 - [ceu3erz8v1] Call file sent.
+DEBUG 20191106181808 - [ceu3erz8v1] Result: {"result":{"response":true,"params":{"dtlssetup":"actpass","avpf":"yes","dtlsenable":"yes","secret":"wj4rryf02nf","transport":"udp,ws,wss","type":"friend","dtlsverify":"fingerprint","encryption":"yes","directmedia":"no","dtlscertfile":"/etc/asterisk/keys/asterisk.pem","host":"dynamic","context":"default","icesupport":"yes","username":"18950286135","force_avp":"yes","rtcp_mux":"yes"}},"tx_id":"ceu3erz8v1"}
+ INFO 20191106183628 - -- Incoming request from 127.0.0.1
+DEBUG 20191106183629 - [zjbj7vu5y9] Received request: {"send_response":false,"params":{"account":"1062"},"tx_id":"zjbj7vu5y9","operation":"GET_ACCOUNT"}
+DEBUG 20191106183629 - [zjbj7vu5y9] Call file sent.
+DEBUG 20191106183629 - [zjbj7vu5y9] Result: {"result":{"response":true},"tx_id":"zjbj7vu5y9"}
+ INFO 20191106183723 - -- Incoming request from 127.0.0.1
+DEBUG 20191106183723 - [xwrksw2wkj] Received request: {"send_response":false,"params":{"account":"18950286135"},"tx_id":"xwrksw2wkj","operation":"GET_ACCOUNT"}
+DEBUG 20191106183723 - [xwrksw2wkj] Call file sent.
+DEBUG 20191106183723 - [xwrksw2wkj] Result: {"result":{"response":true,"params":{"dtlssetup":"actpass","avpf":"yes","dtlsenable":"yes","secret":"wj4rryf02nf","transport":"udp,ws,wss","type":"friend","dtlsverify":"fingerprint","encryption":"yes","directmedia":"no","dtlscertfile":"/etc/asterisk/keys/asterisk.pem","host":"dynamic","context":"default","icesupport":"yes","username":"18950286135","force_avp":"yes","rtcp_mux":"yes"}},"tx_id":"xwrksw2wkj"}
+ INFO 20191106184006 - -- Incoming request from 127.0.0.1
+DEBUG 20191106184007 - [c6e7t4uock] Received request: {"send_response":false,"params":{"account":"18950286135"},"tx_id":"c6e7t4uock","operation":"KILL_ACCOUNT"}
+DEBUG 20191106184007 - [c6e7t4uock] Call file sent.
+DEBUG 20191106184007 - [c6e7t4uock] Result: {"result":{"response":true},"tx_id":"c6e7t4uock"}
+ INFO 20191106184044 - -- Incoming request from 127.0.0.1
+DEBUG 20191106184044 - [dbf1fdipf9] Received request: {"send_response":false,"params":{"password":"66r9i3gi9i9","account":"19115135693"},"tx_id":"dbf1fdipf9","operation":"ADD_ACCOUNT"}
+DEBUG 20191106184044 - [dbf1fdipf9] Call file sent.
+DEBUG 20191106184044 - [dbf1fdipf9] Result: {"result":{"response":true},"tx_id":"dbf1fdipf9"}
+ INFO 20191106193047 - -- Incoming request from 127.0.0.1
+DEBUG 20191106193048 - [ai9zqzch25] Received request: {"send_response":false,"params":{},"tx_id":"ai9zqzch25","operation":"GET_CURRENT_ACCOUNTS"}
+DEBUG 20191106193048 - [ai9zqzch25] Call file sent.
+DEBUG 20191106193048 - [ai9zqzch25] Result: {"result":{"response":true},"tx_id":"ai9zqzch25"}
+ INFO 20191106193356 - -- Incoming request from 127.0.0.1
+DEBUG 20191106193356 - [bbl5l7qzq3] Received request: {"send_response":false,"params":{},"tx_id":"bbl5l7qzq3","operation":"GET_CURRENT_ACCOUNTS"}
+DEBUG 20191106193356 - [bbl5l7qzq3] Call file sent.
+DEBUG 20191106193356 - [bbl5l7qzq3] Result: {"result":{"response":true},"tx_id":"bbl5l7qzq3"}
+ INFO 20191106193456 - -- Incoming request from 127.0.0.1
+DEBUG 20191106193456 - [ssjit91g4h] Received request: {"send_response":false,"params":{},"tx_id":"ssjit91g4h","operation":"GET_CURRENT_ACCOUNTS"}
+DEBUG 20191106193456 - [ssjit91g4h] Call file sent.
+DEBUG 20191106193456 - [ssjit91g4h] Result: {"result":{"response":true},"tx_id":"ssjit91g4h"}
+ INFO 20191106193554 - -- Incoming request from 127.0.0.1
+DEBUG 20191106193555 - [pw3lkwgj3a] Received request: {"send_response":false,"params":{},"tx_id":"pw3lkwgj3a","operation":"GET_CURRENT_ACCOUNTS"}
+DEBUG 20191106193555 - [pw3lkwgj3a] Call file sent.
+DEBUG 20191106193555 - [pw3lkwgj3a] Result: {"result":{"response":true},"tx_id":"pw3lkwgj3a"}
+ INFO 20191106193912 - -- Incoming request from 127.0.0.1
+DEBUG 20191106193912 - [9pie34b1un] Received request: {"send_response":false,"params":{},"tx_id":"9pie34b1un","operation":"GET_CURRENT_ACCOUNTS"}
+DEBUG 20191106193912 - [9pie34b1un] Call file sent.
+DEBUG 20191106193912 - [9pie34b1un] Result: {"result":{"response":true},"tx_id":"9pie34b1un"}
+ INFO 20191106194025 - -- Incoming request from 127.0.0.1
+DEBUG 20191106194025 - [y9mcwxaart] Received request: {"send_response":false,"params":{},"tx_id":"y9mcwxaart","operation":"GET_CURRENT_ACCOUNTS"}
+DEBUG 20191106194025 - [y9mcwxaart] Call file sent.
+DEBUG 20191106194025 - [y9mcwxaart] Result: {"result":{"response":true},"tx_id":"y9mcwxaart"}
+ INFO 20191106194210 - -- Incoming request from 127.0.0.1
+DEBUG 20191106194210 - [tgczncxbrz] Received request: {"send_response":false,"params":{},"tx_id":"tgczncxbrz","operation":"GET_CURRENT_ACCOUNTS"}
+DEBUG 20191106194210 - [tgczncxbrz] Call file sent.
+DEBUG 20191106194210 - [tgczncxbrz] Result: {"result":{"response":true},"tx_id":"tgczncxbrz"}
+ INFO 20191106194351 - -- Incoming request from 127.0.0.1
+DEBUG 20191106194351 - [zaxur3e07j] Received request: {"send_response":false,"params":{},"tx_id":"zaxur3e07j","operation":"GET_CURRENT_ACCOUNTS"}
+DEBUG 20191106194351 - [zaxur3e07j] Call file sent.
+DEBUG 20191106194351 - [zaxur3e07j] Result: {"result":{"response":true},"tx_id":"zaxur3e07j"}
+ INFO 20191106195031 - -- Incoming request from 127.0.0.1
+DEBUG 20191106195031 - [4ajv63s69i] Received request: {"send_response":false,"params":{},"tx_id":"4ajv63s69i","operation":"GET_CURRENT_ACCOUNTS"}
+DEBUG 20191106195031 - [4ajv63s69i] Call file sent.
+DEBUG 20191106195031 - [4ajv63s69i] Result: {"result":{"response":true},"tx_id":"4ajv63s69i"}
+ INFO 20191106195322 - -- Incoming request from 127.0.0.1
+DEBUG 20191106195322 - [gn55wyj5vu] Received request: {"send_response":false,"params":{},"tx_id":"gn55wyj5vu","operation":"GET_CURRENT_ACCOUNTS"}
+DEBUG 20191106195322 - [gn55wyj5vu] Call file sent.
+DEBUG 20191106195322 - [gn55wyj5vu] Result: {"result":{"response":true},"tx_id":"gn55wyj5vu"}
+ INFO 20191106195434 - -- Incoming request from 127.0.0.1
+DEBUG 20191106195434 - [wnjq6rxpuh] Received request: {"send_response":false,"params":{},"tx_id":"wnjq6rxpuh","operation":"GET_CURRENT_ACCOUNTS"}
+DEBUG 20191106195434 - [wnjq6rxpuh] Call file sent.
+DEBUG 20191106195434 - [wnjq6rxpuh] Result: {"result":{"response":true},"tx_id":"wnjq6rxpuh"}
+ INFO 20191106195605 - -- Incoming request from 127.0.0.1
+DEBUG 20191106195606 - [qvqow2yxmn] Received request: {"send_response":false,"params":{},"tx_id":"qvqow2yxmn","operation":"GET_CURRENT_ACCOUNTS"}
+DEBUG 20191106195606 - [qvqow2yxmn] Call file sent.
+DEBUG 20191106195606 - [qvqow2yxmn] Result: {"result":{"array":[{"udpbindaddr":"190.60.4.183 ","allowguest":"no","realm":"190.60.4.183 ","transport":"udp","alwaysauthreject":"yes","account":"general"},{"dtlssetup":"actpass ; Tell Asterisk to use actpass SDP parameter when setting up DTLS ","avpf":"yes ; Tell Asterisk to use AVPF for this peer ","dtlsenable":"yes ; Tell Asterisk to enable DTLS for this peer ","secret":"a123456m ; The SIP Password for SIP.js ","transport":"udp,ws,wss ; Asterisk will allow this peer to register on UDP or WebSockets ","type":"friend ","dtlsverify":"fingerprint ; Tell Asterisk to verify DTLS fingerprint ","encryption":"yes ; Tell Asterisk to use encryption for this peer ","directmedia":"no ; Asterisk will relay media for this peer ","dtlscertfile":"/etc/asterisk/keys/asterisk.pem ; Tell Asterisk where your DTLS cert file is ","host":"dynamic ; Allows any host to register ","context":"default ; Tell Asterisk which context to use when this peer is dialing ","icesupport":"yes ; Tell Asterisk to use ICE for this peer ","account":"1060","username":"1060 ; The Auth user for SIP.js ","force_avp":"yes ; Force Asterisk to use avp. Introduced in Asterisk 11.11 ","rtcp_mux":"yes ; Tell Asterisk to do RTCP mux"},{"nat":"force_rport,comedia",";inband_progress":"yes","host":"dynamic ","context":"default","secret":"a123456m","type":"friend ","account":"1061","username":"1061 "},{"dtlssetup":"actpass ; Tell Asterisk to use actpass SDP parameter when setting up DTLS ","avpf":"yes ; Tell Asterisk to use AVPF for this peer ","dtlsenable":"yes ; Tell Asterisk to enable DTLS for this peer ","secret":"a123456m ; The SIP Password for SIP.js ","transport":"udp,ws,wss ; Asterisk will allow this peer to register on UDP or WebSockets ","type":"friend ","dtlsverify":"fingerprint ; Tell Asterisk to verify DTLS fingerprint ","encryption":"yes ; Tell Asterisk to use encryption for this peer ","directmedia":"no ; Asterisk will relay media for this peer ","dtlscertfile":"/etc/asterisk/keys/asterisk.pem ; Tell Asterisk where your DTLS cert file is ","host":"dynamic ; Allows any host to register ","context":"default ; Tell Asterisk which context to use when this peer is dialing ","icesupport":"yes ; Tell Asterisk to use ICE for this peer ","account":"1062","username":"1062 ; The Auth user for SIP.js ","force_avp":"yes ; Force Asterisk to use avp. Introduced in Asterisk 11.11 ","rtcp_mux":"yes ; Tell Asterisk to do RTCP mux"},{"host ":" 190.60.4.31","dtmf_mode ":" auto",";nat":"no","type ":" peer","allow ":" all","account":"trunk1","directmedia ":" no"},{"dtlssetup":"actpass ; Tell Asterisk to use actpass SDP parameter when setting up DTLS ","avpf":"yes ; Tell Asterisk to use AVPF for this peer ","dtlsenable":"yes ; Tell Asterisk to enable DTLS for this peer ","secret":"123456 ; The SIP Password for SIP.js ","transport":"udp,ws,wss ; Asterisk will allow this peer to register on UDP or WebSockets ","type":"friend ","dtlsverify":"fingerprint ; Tell Asterisk to verify DTLS fingerprint ","encryption":"yes ; Tell Asterisk to use encryption for this peer ","directmedia":"no ; Asterisk will relay media for this peer ","dtlscertfile":"/etc/asterisk/keys/asterisk.pem ; Tell Asterisk where your DTLS cert file is ","host":"dynamic ; Allows any host to register ","context":"default ; Tell Asterisk which context to use when this peer is dialing ","icesupport":"yes ; Tell Asterisk to use ICE for this peer ","account":"elkin","username":"elkin ; The Auth user for SIP.js ","force_avp":"yes ; Force Asterisk to use avp. Introduced in Asterisk 11.11 ","rtcp_mux":"yes ; Tell Asterisk to do RTCP mux"},{"dtlssetup":"actpass ; Tell Asterisk to use actpass SDP parameter when setting up DTLS ","avpf":"yes ; Tell Asterisk to use AVPF for this peer ","dtlsenable":"yes ; Tell Asterisk to enable DTLS for this peer ","secret":"123456 ; The SIP Password for SIP.js ","transport":"udp,ws,wss ; Asterisk will allow this peer to register on UDP or WebSockets ","type":"friend ","dtlsverify":"fingerprint ; Tell Asterisk to verify DTLS fingerprint ","encryption":"yes ; Tell Asterisk to use encryption for this peer ","directmedia":"no ; Asterisk will relay media for this peer ","dtlscertfile":"/etc/asterisk/keys/asterisk.pem ; Tell Asterisk where your DTLS cert file is ","host":"dynamic ; Allows any host to register ","context":"default ; Tell Asterisk which context to use when this peer is dialing ","icesupport":"yes ; Tell Asterisk to use ICE for this peer ","account":"luis","username":"luis ; The Auth user for SIP.js ","force_avp":"yes ; Force Asterisk to use avp. Introduced in Asterisk 11.11 ","rtcp_mux":"yes ; Tell Asterisk to do RTCP mux"},{"dtlssetup":"actpass","avpf":"yes","dtlsenable":"yes","secret":"66r9i3gi9i9","transport":"udp,ws,wss","type":"friend","dtlsverify":"fingerprint","encryption":"yes","directmedia":"no","dtlscertfile":"/etc/asterisk/keys/asterisk.pem","host":"dynamic","context":"default","icesupport":"yes","account":"19115135693","username":"19115135693","force_avp":"yes","rtcp_mux":"yes"}],"response":true},"tx_id":"qvqow2yxmn"}
+ INFO 20191106201416 - -- Incoming request from 127.0.0.1
+DEBUG 20191106201416 - [8niddxkof1] Received request: {"send_response":false,"params":{"codecs":"g729,ulaw,alaw","account":"1062"},"tx_id":"8niddxkof1","operation":"CHANGE_CODECS"}
+DEBUG 20191106201416 - [8niddxkof1] Call file sent.
+DEBUG 20191106201416 - [8niddxkof1] Result: {"result":{"response":true},"tx_id":"8niddxkof1"}
+ INFO 20191106201717 - -- Incoming request from 127.0.0.1
+DEBUG 20191106201718 - [ns1suq4s8b] Received request: {"send_response":false,"params":{"codecs":"g729,ulaw,alaw","account":"1062"},"tx_id":"ns1suq4s8b","operation":"CHANGE_CODECS"}
+DEBUG 20191106201718 - [ns1suq4s8b] Call file sent.
+DEBUG 20191106201718 - [ns1suq4s8b] Result: {"result":{"response":true},"tx_id":"ns1suq4s8b"}
+ INFO 20191106201917 - -- Incoming request from 127.0.0.1
+DEBUG 20191106201917 - [4x25rhae7r] Received request: {"send_response":false,"params":{"codecs":"g729,ulaw,alaw","account":"1062"},"tx_id":"4x25rhae7r","operation":"CHANGE_CODECS"}
+DEBUG 20191106201917 - [4x25rhae7r] Call file sent.
+DEBUG 20191106201917 - [4x25rhae7r] Result: {"result":{"response":true},"tx_id":"4x25rhae7r"}
+ INFO 20191106202126 - -- Incoming request from 127.0.0.1
+DEBUG 20191106202126 - [czb83uyv9m] Received request: {"send_response":false,"params":{"codecs":"g729,ulaw,alaw","account":"1062"},"tx_id":"czb83uyv9m","operation":"CHANGE_CODECS"}
+DEBUG 20191106202126 - [czb83uyv9m] Call file sent.
+DEBUG 20191106202126 - [czb83uyv9m] Result: {"result":{"response":true},"tx_id":"czb83uyv9m"}
+ INFO 20191106202159 - -- Incoming request from 127.0.0.1
+DEBUG 20191106202159 - [fit3nok3hc] Received request: {"send_response":false,"params":{"codecs":"g729,ulaw,alaw","account":"1062"},"tx_id":"fit3nok3hc","operation":"CHANGE_CODECS"}
+DEBUG 20191106202159 - [fit3nok3hc] Call file sent.
+DEBUG 20191106202159 - [fit3nok3hc] Result: {"result":{"response":true},"tx_id":"fit3nok3hc"}
+ INFO 20191106202305 - -- Incoming request from 127.0.0.1
+DEBUG 20191106202305 - [ys75bwku6f] Received request: {"send_response":false,"params":{"codecs":"g729,ulaw,alaw","account":"1062"},"tx_id":"ys75bwku6f","operation":"CHANGE_CODECS"}
+DEBUG 20191106202305 - [ys75bwku6f] Call file sent.
+DEBUG 20191106202306 - [ys75bwku6f] Result: {"result":{"response":true},"tx_id":"ys75bwku6f"}
+ INFO 20191106202339 - -- Incoming request from 127.0.0.1
+DEBUG 20191106202339 - [4o10n47006] Received request: {"send_response":false,"params":{"codecs":"g729,ulaw,alaw","account":"1062"},"tx_id":"4o10n47006","operation":"CHANGE_CODECS"}
+DEBUG 20191106202339 - [4o10n47006] Call file sent.
+DEBUG 20191106202339 - [4o10n47006] Result: {"result":{"response":true},"tx_id":"4o10n47006"}
+ INFO 20191106202503 - -- Incoming request from 127.0.0.1
+DEBUG 20191106202503 - [o64u43336s] Received request: {"send_response":false,"params":{"codecs":"g7236,ulaw,alaw","account":"1062"},"tx_id":"o64u43336s","operation":"CHANGE_CODECS"}
+DEBUG 20191106202503 - [o64u43336s] Call file sent.
+DEBUG 20191106202503 - [o64u43336s] Result: {"result":{"response":true},"tx_id":"o64u43336s"}
+ INFO 20191122120611 - -- Incoming request from 127.0.0.1
+DEBUG 20191122120611 - [euanl59cbf] Received request: {"send_response":false,"params":{"context_name":"company_3sz9du"},"tx_id":"euanl59cbf","operation":"CREATE_CONTEXT"}
+DEBUG 20191122120611 - [euanl59cbf] Call file sent.
+DEBUG 20191122120611 - [euanl59cbf] Result: {"result":{"response":true},"tx_id":"euanl59cbf"}
+ INFO 20191122120849 - -- Incoming request from 127.0.0.1
+DEBUG 20191122120849 - [j3o1ghrziy] Received request: {"send_response":false,"params":{"context_name":"company_srw7vs"},"tx_id":"j3o1ghrziy","operation":"CREATE_CONTEXT"}
+DEBUG 20191122120849 - [j3o1ghrziy] Call file sent.
+DEBUG 20191122120849 - [j3o1ghrziy] Result: {"result":{"response":true},"tx_id":"j3o1ghrziy"}
