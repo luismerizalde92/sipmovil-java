@@ -15,6 +15,7 @@ import logic.Groups;
 import logic.VoiceMail;
 import logic.Ivrs;
 import org.apache.log4j.Logger;
+import static sipmovilrtc.connection.SipmovilrtcConnection.DID_INDEX;
 import static sipmovilrtc.connection.SipmovilrtcConnection.logger;
 
 public class FileOperations {
@@ -32,6 +33,7 @@ public class FileOperations {
     private static final String VOICEMAIL_FILE = "voicemail.conf";
     private static final String QUEUES_FILE = "queues.conf";
     private static final String AUDIO_FOLDER = "sounds/";
+    private static final String DID_INDEX = SipmovilrtcConnection.DID_INDEX;
          
     public static boolean WriteNewFile(ArrayList<String> array, String path){
         try (PrintWriter pr = new PrintWriter(path)){
@@ -199,24 +201,6 @@ public class FileOperations {
                 } catch (Exception e) {
                 }
                 
-            case "EDIT_EXTENSION": 
-                System.out.println("FileOperation: EDIT_EXTENSION");
-                logger.info("FileOperation: EDIT_EXTENSION");
-                try {
-                    String old_extension = params.getString("old_extension"); 
-                    String new_extension = params.getString("new_extension");
-                    String context_name = params.getString("context_name");
-                    String time_ring = params.getString("time_ring");
-                    String account = params.getString("account");
-                    String company_directory = COMPANY_DIRECTORY+context_name+"/";
-                    String extensions_file = company_directory + EXTENSIONS_FILE;
-                    boolean ret = Extensions.editExtension(old_extension, new_extension, context_name, account, time_ring, extensions_file); 
-                    
-                    json.put("response", ret);
-                    break;
-                } catch (Exception e) {
-                }
-                
             case "CREATE_COMPANY": 
                 System.out.println("FileOperation: CREATE_COMPANY");
                 logger.info("FileOperation: CREATE_COMPANY");
@@ -250,6 +234,41 @@ public class FileOperations {
                     Runtime.getRuntime().exec("touch " + queues_file);
                     Groups.addContext(queues_file);          
 
+                    json.put("response", true);
+                    break;
+                } catch (Exception e) {
+                }
+
+                
+            case "EDIT_EXTENSION": 
+                System.out.println("FileOperation: EDIT_EXTENSION");
+                logger.info("FileOperation: EDIT_EXTENSION");
+                try {
+                    String old_extension = params.getString("old_extension"); 
+                    String new_extension = params.getString("new_extension");
+                    String context_name = params.getString("context_name");
+                    String time_ring = params.getString("time_ring");
+                    String account = params.getString("account");
+                    String company_directory = COMPANY_DIRECTORY+context_name+"/";
+                    String extensions_file = company_directory + EXTENSIONS_FILE;
+                    boolean ret = Extensions.editExtension(old_extension, new_extension, context_name, account, time_ring, extensions_file); 
+                    
+                    json.put("response", ret);
+                    break;
+                } catch (Exception e) {
+                }
+                
+            case "UPDATE_VOICEMAIL_EXTENSION": 
+                System.out.println("FileOperation: UPDATE_VOICEMAIL_EXTENSION");
+                logger.info("FileOperation: UPDATE_VOICEMAIL_EXTENSION");
+                try {  
+                    String context = params.getString("context");
+                    String extension = params.getString("extension");
+                    // Creación del directorio para una nueva empresa
+                    String company_directory = COMPANY_DIRECTORY+context+"/";
+                    String extensions_file = company_directory + EXTENSIONS_FILE;          
+                    Extensions.updateVoicemail(context, extension, extensions_file);                    
+ 
                     json.put("response", true);
                     break;
                 } catch (Exception e) {
@@ -508,9 +527,7 @@ public class FileOperations {
                     String old_dids = params.getString("old_dids");
                     String new_dids = params.getString("new_dids");
                     String extension = params.getString("extension");
-                    String company_directory = COMPANY_DIRECTORY+context+"/";
-                    // Eliminar los did existentes
-                    String extension_file = company_directory + EXTENSIONS_FILE;
+                    String extension_file = DID_INDEX;
                     Extensions.deleteDIDs(old_dids, extension_file);                    
                     // escribir los nuevos DIDs con la extension pertinente
                     Extensions.addDIDs(new_dids, extension, context, 
@@ -532,9 +549,7 @@ public class FileOperations {
                         JsonObject element = pa.getAsJsonObject();
                         String context = element.get("context").getAsString();
                         JsonArray didArray = element.get("dids").getAsJsonArray();
-                        String company_directory = COMPANY_DIRECTORY+context+"/";
-                        // escribir los nuevos did
-                        String extension_file = company_directory + EXTENSIONS_FILE;
+                        String extension_file = DID_INDEX;
                         Extensions.addDIDs(didArray, context, extension_file);
                     }
                     json.put("response", true);
@@ -542,9 +557,25 @@ public class FileOperations {
                 } catch (Exception e) {
                 }
                 
+            case "DID_OPERATION": 
+                System.out.println("FileOperation: DID_OPERATION");
+                logger.info("FileOperation: DID_OPERATION");
+                try {  
+                    String context = params.getString("context");
+                    String did = params.getString("did");
+                    String extension = params.getString("extension");
+                    String operationx = params.getString("operation");
+                    String extension_file = DID_INDEX;
+                    Extensions.didOperation(context, did, extension, operationx, 
+                            extension_file);
+                    json.put("response", true);
+                    break;
+                } catch (Exception e) {
+                }
+                
             case "DELETE_USER": 
-                System.out.println("FileOperation: NEW_DIDS");
-                logger.info("FileOperation: NEW_DIDS");
+                System.out.println("FileOperation: DELETE_USER");
+                logger.info("FileOperation: DELETE_USER");
                 try {  
                     String context = params.getString("context");
                     String extension = params.getString("extension");

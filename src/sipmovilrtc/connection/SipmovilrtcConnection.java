@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Properties;
 import org.apache.log4j.*;
 
@@ -26,7 +27,7 @@ public class SipmovilrtcConnection {
     public static String GROUPS_FILE, GROUPS_FOLDER;
     
     public static String COMPANY_DIRECTORY, PJSIP_INDEX, EXTENSIONS_INDEX, VOICEMAIL_INDEX, QUEUES_INDEX, FTP_USER;
-    
+    public static String DID_INDEX;
     
     public static boolean loadExecutionParameters() {
         try {
@@ -66,6 +67,7 @@ public class SipmovilrtcConnection {
             EXTENSIONS_INDEX = prop.getProperty("EXTENSIONS_INDEX");
             VOICEMAIL_INDEX = prop.getProperty("VOICEMAIL_INDEX");
             QUEUES_INDEX = prop.getProperty("QUEUES_INDEX");
+            DID_INDEX = prop.getProperty("DIDS_INDEX");
             
             FTP_USER = prop.getProperty("FTP_USER");
             
@@ -141,11 +143,18 @@ class RunRequest implements Runnable {
             output.write(response.toString().getBytes());
         } catch (Exception e) {
             System.out.println("entro excepcion primer try");
+            logger.fatal("entro Exception Runrequest");
+            System.out.println(Arrays.toString(e.getStackTrace()));
+            logger.fatal(Arrays.toString(e.getStackTrace()));
         } finally {
             try {
                 socket.close();
+                logger.fatal("entro socket.close(): stop socket");
             } catch (Exception e) {
                 System.out.println("entro Exception socket.close();");
+                logger.fatal("entro Exception socket.close()");
+                System.out.println(Arrays.toString(e.getStackTrace()));
+                logger.fatal(Arrays.toString(e.getStackTrace()));
             }
         }
     }

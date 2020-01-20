@@ -393,6 +393,42 @@ public class Extensions {
         return true;
     }
     
+    public static boolean didOperation(String context, String did, String extension,
+                        String operation, String extensionFile){
+        System.out.println("From Extensions.didOperation");
+        LOGGER.info("From Extensions.didOperation");
+        ArrayList<String> tempArray = new ArrayList<>();
+        try (FileReader fr = new FileReader(extensionFile)) {
+            Scanner reader = new Scanner(fr);
+            String line;  
+            while ( reader.hasNextLine() ) {
+                line=reader.nextLine();
+                if (line.contains(did)) {
+                    if (operation.equals("update")){
+                        tempArray.add("exten => "+did+",1,Goto("+context+","+extension+",1)");
+                    }
+                }else{
+                    tempArray.add(line);
+                }
+            }
+            if (operation.equals("add")){
+                tempArray.add("exten => "+did+",1,Goto("+context+","+extension+",1)");
+            }
+            System.out.println("salio while");
+            // cierra el archivo despues de leerlo
+            fr.close();   
+            
+            boolean ret = FileOperations.WriteNewFile(tempArray, extensionFile);
+            
+        } catch (Exception e) {
+            System.out.println(Arrays.toString(e.getStackTrace()));
+            LOGGER.fatal(Arrays.toString(e.getStackTrace()));
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
+    }  
+    
     public static Boolean addDIDs(JsonArray didsArray, String context,
             String extensionsFile){
         System.out.println("FROM Groups.addDIDs with jsonArray");  
@@ -417,6 +453,37 @@ public class Extensions {
             return false;
         }
         
+        return true;
+    }
+    
+    public static boolean updateVoicemail(String context, String extension,
+            String extensionFile){
+        System.out.println("From Extensions.updateVoicemail");
+        LOGGER.info("From Extensions.updateVoicemail");
+        ArrayList<String> tempArray = new ArrayList<>();
+        try (FileReader fr = new FileReader(extensionFile)) {
+            Scanner reader = new Scanner(fr);
+            String line;  
+            while ( reader.hasNextLine() ) {
+                line=reader.nextLine();
+                if (line.contains("1,VoiceMailMain")) {
+                    tempArray.add("exten => "+extension+",1,VoiceMailMain(${CDR(src)}@"+context+")");
+                }else{
+                    tempArray.add(line);
+                }
+            }
+            System.out.println("salio while");
+            // cierra el archivo despues de leerlo
+            fr.close();   
+            
+            boolean ret = FileOperations.WriteNewFile(tempArray, extensionFile);
+            
+        } catch (Exception e) {
+            System.out.println(Arrays.toString(e.getStackTrace()));
+            LOGGER.fatal(Arrays.toString(e.getStackTrace()));
+            System.out.println(e.getMessage());
+            return false;
+        }
         return true;
     }
     
