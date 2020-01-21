@@ -173,8 +173,14 @@ public class Extensions {
             //out.println("\n");
             out.println("["+contextName+"]"); 
             out.println("exten => *111,1,VoiceMailMain(${CDR(src)}@"+contextName+")");
+//            out.println("exten => _57X.,1,Progress()");
+//            out.println("exten => _57X.,2,DIAL(PJSIP/${EXTEN}@"+sipmovil_trunk+")");
             out.println("exten => _57X.,1,Progress()");
-            out.println("exten => _57X.,2,DIAL(PJSIP/${EXTEN}@"+sipmovil_trunk+")");
+            out.println("same => n,Set(CURL_RESULT=${CURL(https://pbx.sipmovil.com/get_did/${CDR(src)}/)})");
+            out.println("same => n,GotoIf($[${CURL_RESULT} = \"error\"]?error:do-call)");
+            out.println("same => n(error),Hangup");
+            out.println("same => n(do-call),Set(CALLERID(num)=${CURL_RESULT})");
+            out.println("same => n,DIAL(PJSIP/${EXTEN}@"+sipmovil_trunk+")");
             
         } catch (IOException e) {
             System.out.println("excepcion try");
