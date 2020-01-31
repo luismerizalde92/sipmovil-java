@@ -33,6 +33,7 @@ public class FileOperations {
     private static final String VOICEMAIL_FILE = "voicemail.conf";
     private static final String QUEUES_FILE = "queues.conf";
     private static final String AUDIO_FOLDER = "sounds/";
+    private static final String RECORD_FOLDER = "records/";
     private static final String DID_INDEX = SipmovilrtcConnection.DID_INDEX;
          
     public static boolean WriteNewFile(ArrayList<String> array, String path){
@@ -193,6 +194,13 @@ public class FileOperations {
                     String extension = params.getString("extension");
                     String time_ring = params.getString("time_ring");
                     String account = params.getString("account");
+                    // creacion del directorio para almacenar las grabaciones de los usuarios
+                    String company_directory = COMPANY_DIRECTORY+context_name+"/";
+                    String records_folder = company_directory + RECORD_FOLDER + account + "/";
+                    Runtime.getRuntime().exec("mkdir " + records_folder);
+                    Runtime.getRuntime().exec("sudo chown "+FTP_USER+":"+FTP_USER+" "+ records_folder);
+                    Runtime.getRuntime().exec("sudo chmod a+rwx "+records_folder);
+                    
                     String current_file = EXTENSION_FOLDER + context_name + ".conf";
                     boolean ret = Extensions.createExtension(context_name, extension, time_ring, account, current_file); 
                     
@@ -215,6 +223,11 @@ public class FileOperations {
                     Runtime.getRuntime().exec("mkdir " + audio_folder);
                     Runtime.getRuntime().exec("sudo chown "+FTP_USER+":"+FTP_USER+" "+ audio_folder);
                     Runtime.getRuntime().exec("sudo chmod a+rwx "+audio_folder);
+                    // creacion del directorio para almacenar las grabaciones de los usuarios
+                    String records_folder = company_directory + RECORD_FOLDER;
+                    Runtime.getRuntime().exec("mkdir " + records_folder);
+                    Runtime.getRuntime().exec("sudo chown "+FTP_USER+":"+FTP_USER+" "+ records_folder);
+                    Runtime.getRuntime().exec("sudo chmod a+rwx "+records_folder);
                     // creacion del archivo donde se almacenaran los clientes PJSIP
                     String pjsip_file = company_directory + PJSIP_FILE;
                     Runtime.getRuntime().exec("touch " + pjsip_file);
@@ -305,6 +318,11 @@ public class FileOperations {
                     // Creación de la nueva cuenta webrtc
                     String accountFile = company_directory+PJSIP_FILE;
                     Accounts.addAccount(account, password, context, accountFile);
+                    // Creacion del directorio para almacenar las grabaciones
+                    String records_folder = company_directory + RECORD_FOLDER +"/"+account+"/";
+                    Runtime.getRuntime().exec("mkdir " + records_folder);
+                    Runtime.getRuntime().exec("sudo chown "+FTP_USER+":"+FTP_USER+" "+ records_folder);
+                    Runtime.getRuntime().exec("sudo chmod a+rwx "+records_folder);
                     // creacion de la extension para cuenta webrtc
                     String extensions_file = company_directory + EXTENSIONS_FILE;
                     Extensions.createExtension(context, extension, time_ring, account, extensions_file);                    
@@ -590,6 +608,24 @@ public class FileOperations {
                     //eliminar cuenta voicemail
                     String voicemail_file = company_directory + VOICEMAIL_FILE;
                     VoiceMail.deleteVoicemail(account, voicemail_file);
+                    
+                    json.put("response", true);
+                    break;
+                } catch (Exception e) {
+                }
+                
+            case "DELETE_RECORD": 
+                System.out.println("FileOperation: DELETE_RECORD");
+                logger.info("FileOperation: DELETE_RECORD");
+                try {  
+                    String context = params.getString("context");
+                    String filename = params.getString("filename");
+                    String account = params.getString("account");
+                    String record_folder = COMPANY_DIRECTORY+context+"/";
+                    record_folder = record_folder+RECORD_FOLDER+account+"/";
+                    String audio_file = record_folder+filename;
+                    //eliminar extension
+                    Runtime.getRuntime().exec("rm " + audio_file);;
                     
                     json.put("response", true);
                     break;

@@ -47,7 +47,7 @@ public class Extensions {
                     System.out.println("Entro old_extension");
                     tempArray.add("exten => "+new_extension+",1,NoOp(Llamada entrante ${CDR(src)} a extension ${EXTEN} por canal ${CHANNEL})");
                     tempArray.add("same => n,Set(OVERFLOW="+time_ring+")");
-                    tempArray.add("same => n,Gosub(sipmovil-extension,s,1(${EXTEN},${CDR(src)},${OVERFLOW}}))\n");
+                    tempArray.add("same => n,Gosub(sipmovil-extension,s,1(${EXTEN},${OVERFLOW},${CDR(dcontext)},${CONTEXT}))\n");
                     boolean flg = false;
                     while ( reader.hasNextLine() && flg == false ) {
                         line=reader.nextLine();
@@ -119,8 +119,9 @@ public class Extensions {
             String line;  
             while ( reader.hasNextLine() ) {
                 line=reader.nextLine();
-                if (line.contains("@trunk")) {
-                    tempArray.add("exten => _57X.,2,DIAL(PJSIP/${EXTEN}@"+sipmovil_trunk+")");
+                if (line.contains("Gosub(outgoing-call")) {
+                    tempArray.add("same => n,Gosub(outgoing-call,s,1(${EXTEN},${CONTEXT},${CDR(src)},"+sipmovil_trunk+"))");
+//                    tempArray.add("exten => _57X.,2,DIAL(PJSIP/${EXTEN}@"+sipmovil_trunk+")");
                     boolean flg = false;
                     while ( reader.hasNextLine() && flg == false ) {
                         line=reader.nextLine();
@@ -170,17 +171,13 @@ public class Extensions {
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw))
         {
-            //out.println("\n");
             out.println("["+contextName+"]"); 
             out.println("exten => *111,1,VoiceMailMain(${CDR(src)}@"+contextName+")");
+            out.println("_57X.,1,Progress()");
+            out.println("same => n,Gosub(outgoing-call,s,1(${EXTEN},${CONTEXT},${CDR(src)},"+sipmovil_trunk+"))");
 //            out.println("exten => _57X.,1,Progress()");
 //            out.println("exten => _57X.,2,DIAL(PJSIP/${EXTEN}@"+sipmovil_trunk+")");
-            out.println("exten => _57X.,1,Progress()");
-            out.println("same => n,Set(CURL_RESULT=${CURL(https://pbx.sipmovil.com/get_did/${CDR(src)}/)})");
-            out.println("same => n,GotoIf($[${CURL_RESULT} = \"error\"]?error:do-call)");
-            out.println("same => n(error),Hangup");
-            out.println("same => n(do-call),Set(CALLERID(num)=${CURL_RESULT})");
-            out.println("same => n,DIAL(PJSIP/${EXTEN}@"+sipmovil_trunk+")");
+
             
         } catch (IOException e) {
             System.out.println("excepcion try");
@@ -207,7 +204,7 @@ public class Extensions {
             out.println("\n");
             out.println("exten => "+extension+",1,NoOp(Llamada entrante ${CDR(src)} a extension ${EXTEN} por canal ${CHANNEL})");
             out.println("same => n,Set(OVERFLOW="+timeRing+")");
-            out.println("same => n,Gosub(sipmovil-extension,s,1(${EXTEN},${CDR(src)},${OVERFLOW}}))");
+            out.println("same => n,Gosub(sipmovil-extension,s,1(${EXTEN},${OVERFLOW},${CDR(dcontext)},${CONTEXT}))");
         } catch (IOException e) {
             System.out.println("excepcion try");
             return false;
