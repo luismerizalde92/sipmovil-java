@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import logic.Accounts;
+import logic.AudioManager;
 import logic.Extensions;
 import logic.Groups;
 import logic.VoiceMail;
@@ -562,14 +563,16 @@ public class FileOperations {
                 try {  
                     String data = params.getString("data");
                     Gson gson = new Gson();
-                    JsonArray didsArray = gson.fromJson(data, JsonArray.class); 
-                    for (JsonElement pa : didsArray) {
-                        JsonObject element = pa.getAsJsonObject();
-                        String context = element.get("context").getAsString();
-                        JsonArray didArray = element.get("dids").getAsJsonArray();
-                        String extension_file = DID_INDEX;
-                        Extensions.addDIDs(didArray, context, extension_file);
-                    }
+                    JsonArray didArray = gson.fromJson(data, JsonArray.class); 
+                    String extension_file = DID_INDEX;
+                    Extensions.newDIDs(didArray, extension_file);
+//                    for (JsonElement pa : didsArray) {
+//                        JsonObject element = pa.getAsJsonObject();
+//                        String context = element.get("context").getAsString();
+//                        JsonArray didArray = element.get("dids").getAsJsonArray();
+//                        String extension_file = DID_INDEX;
+//                        Extensions.addDIDs(didArray, context, extension_file);
+//                    }
                     json.put("response", true);
                     break;
                 } catch (Exception e) {
@@ -625,9 +628,45 @@ public class FileOperations {
                     record_folder = record_folder+RECORD_FOLDER+account+"/";
                     String audio_file = record_folder+filename;
                     //eliminar extension
-                    Runtime.getRuntime().exec("rm " + audio_file);;
+                    Runtime.getRuntime().exec("rm " + audio_file);
                     
                     json.put("response", true);
+                    break;
+                } catch (Exception e) {
+                }
+                
+            case "GET_COMPANIES_STORAGE": 
+                System.out.println("FileOperation: GET_COMPANIES_STORAGE");
+                logger.info("FileOperation: GET_COMPANIES_STORAGE");
+                try { 
+                    JsonArray response = new JsonArray();
+                    response = AudioManager.getCompaniesStorage();                    
+                    json.put("companies", response);
+                    break;
+                } catch (Exception e) {
+                }
+                
+            case "GET_COMPANY_STORAGE": 
+                System.out.println("FileOperation: GET_COMPANY_STORAGE");
+                logger.info("FileOperation: GET_COMPANY_STORAGE");
+                try {                     
+                    String record_path = params.getString("record_path");
+                    JsonObject response = new JsonObject();
+                    response = AudioManager.getCompanytInfo(record_path);                    
+                    json.put("company", response);
+                    break;
+                } catch (Exception e) {
+                }
+                
+            case "GET_ACCOUNT_STORAGE": 
+                System.out.println("FileOperation: GET_ACCOUNT_STORAGE");
+                logger.info("FileOperation: GET_ACCOUNT_STORAGE");
+                try { 
+                    String record_path = params.getString("record_path");
+                    String account_name = params.getString("account");
+                    JsonObject response = new JsonObject();
+                    response = AudioManager.getAccountInfo(record_path, account_name);                    
+                    json.put("company", response);
                     break;
                 } catch (Exception e) {
                 }

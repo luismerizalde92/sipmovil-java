@@ -432,19 +432,20 @@ public class Extensions {
         return true;
     }  
     
-    public static Boolean addDIDs(JsonArray didsArray, String context,
-            String extensionsFile){
+    public static Boolean newDIDs(JsonArray didsArray, String extensionsFile){
         System.out.println("FROM Groups.addDIDs with jsonArray");  
         LOGGER.info("From Groups.addDIDs jsonArray");
 
         // inclusion del archivo de la empresa en el indice de contextos
-        try(FileWriter fw = new FileWriter(extensionsFile, true);
+        try(FileWriter fw = new FileWriter(extensionsFile, false);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw))
         {
+            out.println("[from-sipmovil]");
             for (JsonElement pa : didsArray) {
                 JsonObject element = pa.getAsJsonObject();
                 String did = element.get("did").getAsString();
+                String context = element.get("context").getAsString();
                 String extension = element.get("extension").getAsString();
                 out.println("exten => "+did+",1,Goto("+context+","+extension+",1)");
             }
