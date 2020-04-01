@@ -213,7 +213,9 @@ public class Extensions {
         return true;
     }
     
-    public static boolean createGroup(String extension, String groupName, String slugName, String overflowTime, String exten_file){
+    public static boolean createGroup(String extension, String groupName, String slugName, 
+            String overflowTime, String retryTime, String ringTime, String accounts, 
+            String strategy, String exten_file){
         System.out.println("from Extensions.createGroup in file "+exten_file);
         LOGGER.info("From Extensions.createGroup");
         try(FileWriter fw = new FileWriter(exten_file, true);
@@ -223,7 +225,12 @@ public class Extensions {
             out.println("exten => "+extension+",1,NoOp(Llamada a grupo: "+groupName+")");
             out.println("same => n,Set(SLUG="+slugName+")");
             out.println("same => n,Set(OVERFLOW="+overflowTime+")");
-            out.println("same => n,Gosub(sipmovil-ringgroup,s,1(${SLUG},${OVERFLOW}}))\n");
+            out.println("same => n,Set(STRATEGY="+strategy+")");
+            out.println("same => n,Set(WAIT="+retryTime+")");
+            out.println("same => n,Set(RINGTIME="+ringTime+")");
+            out.println("same => n,Set(ACCOUNTS="+"\""+accounts+"\""+")");
+            out.println("same => n,Gosub(sipmovil-ringgroup,s,1(${SLUG},${OVERFLOW},"+
+                            "${STRATEGY},${WAIT},${RINGTIME},${ACCOUNTS}))\n");
         } catch (IOException e) {
             System.out.println("excepcion try");
             return false;
@@ -233,7 +240,8 @@ public class Extensions {
     
     public static boolean editGroupExtension(String old_extension, 
             String new_extension, String slugName, String groupName, 
-            String overflowTime, String extensionFile){
+            String overflowTime, String extensionFile, String retryTime,
+            String timeout, String strategy, String accounts){
         System.out.println("From Extensions.editGroupExtension");
         LOGGER.info("From Extensions.editGroupExtension");
         ArrayList<String> tempArray = new ArrayList<>();
@@ -246,7 +254,12 @@ public class Extensions {
                     tempArray.add("exten => "+new_extension+",1,NoOp(Llamada a grupo: "+groupName+")");
                     tempArray.add("same => n,Set(SLUG="+slugName+")");
                     tempArray.add("same => n,Set(OVERFLOW="+overflowTime+")");
-                    tempArray.add("same => n,Gosub(sipmovil-ringgroup,s,1(${SLUG},${OVERFLOW}}))\n");
+                    tempArray.add("same => n,Set(STRATEGY="+strategy+")");
+                    tempArray.add("same => n,Set(WAIT="+retryTime+")");
+                    tempArray.add("same => n,Set(RINGTIME="+timeout+")");
+                    tempArray.add("same => n,Set(ACCOUNTS="+"\""+accounts+"\""+")");
+                    tempArray.add("same => n,Gosub(sipmovil-ringgroup,s,1(${SLUG},${OVERFLOW},"+
+                            "${STRATEGY},${WAIT},${RINGTIME},${ACCOUNTS}))\n");
                     boolean flg = false;
                     while ( reader.hasNextLine() && flg == false ) {
                         line=reader.nextLine();

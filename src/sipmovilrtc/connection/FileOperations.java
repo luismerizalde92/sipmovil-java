@@ -6,6 +6,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dsk2.json.JSONException;
 import dsk2.json.JSONObject;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +38,7 @@ public class FileOperations {
     private static final String QUEUES_FILE = "queues.conf";
     private static final String AUDIO_FOLDER = "sounds/";
     private static final String RECORD_FOLDER = "records/";
+    private static final String CONVERTED_FOLDER = "converted/";
     private static final String DID_INDEX = SipmovilrtcConnection.DID_INDEX;
          
     public static boolean WriteNewFile(ArrayList<String> array, String path){
@@ -349,13 +353,15 @@ public class FileOperations {
                     String groupName = params.getString("groupName");
                     String slugName = params.getString("slugName");
                     String overflowTime = params.getString("overflowTime");
+                    String accounts = params.getString("accounts");
                     String company_directory = COMPANY_DIRECTORY+context+"/";
                     // Creación del grupo en el respectivo archivo queue.conf
-                    String queueFile = company_directory+QUEUES_FILE;
-                    Groups.addGroup(slugName, retryTime, timeout, strategy, queueFile);
+                    //String queueFile = company_directory+QUEUES_FILE;
+                    //Groups.addGroup(slugName, retryTime, timeout, strategy, queueFile);
                     // creacion de la extension para para el grupo de timbrado
                     String extensions_file = company_directory + EXTENSIONS_FILE;
-                    Extensions.createGroup(extension, groupName, slugName, overflowTime, extensions_file);                    
+                    Extensions.createGroup(extension, groupName, slugName, overflowTime, 
+                            retryTime, timeout, accounts, strategy, extensions_file);                    
                     
                     json.put("response", true);
                     break;
@@ -391,11 +397,16 @@ public class FileOperations {
                     String slugName = params.getString("slugName");
                     String overflowTime = params.getString("overflowTime");
                     String groupName = params.getString("groupName");
+                    String retryTime = params.getString("retryTime");
+                    String timeout = params.getString("timeout");
+                    String strategy = params.getString("strategy");
+                    String accounts = params.getString("accounts");
                     String company_directory = COMPANY_DIRECTORY+context+"/";
                     // Actualizacion de la extension para para el grupo de timbrado
                     String extensions_file = company_directory+EXTENSIONS_FILE;
                     Extensions.editGroupExtension(old_extension, new_extension,
-                            slugName, groupName, overflowTime, extensions_file);                    
+                            slugName, groupName, overflowTime, extensions_file,
+                            retryTime, timeout, strategy, accounts);                    
                     
                     json.put("response", true);
                     break;
@@ -669,6 +680,61 @@ public class FileOperations {
                     json.put("company", response);
                     break;
                 } catch (Exception e) {
+                }
+                
+            case "GET_COMPANY_RECORDS": 
+                System.out.println("FileOperation: GET_COMPANY_RECORDS");
+                logger.info("FileOperation: GET_COMPANY_RECORDS");
+                try {                     
+                    String record_path = params.getString("record_path");
+                    JsonObject response = new JsonObject();
+                    response = AudioManager.getCompanyRecords(record_path);                    
+                    json.put("company", response);
+                    break;
+                } catch (Exception e) {
+                }
+                
+            case "CONVERT_AUDIO": 
+                System.out.println("FileOperation: CONVERT_AUDIO");
+                logger.info("FileOperation: CONVERT_AUDIO");
+                try {                     
+                    String context = params.getString("context");
+                    logger.info("context: "+context);
+                    String fileName = params.getString("fileName");
+                    logger.info("context: "+fileName);
+                    String account = params.getString("account");
+                    logger.info("context: "+account);
+                    String destinationFormat = params.getString("destinationFormat");
+                    logger.info("context: "+destinationFormat);
+                    
+                    String company_directory = COMPANY_DIRECTORY+context+"/";
+                    String audio_path = company_directory+RECORD_FOLDER+account+"/"+fileName;
+                    logger.info("audio_path: "+audio_path);
+                    
+                    String converted_directory = company_directory+CONVERTED_FOLDER;
+                    String converted_file = fileName.replace(AudioManager.fileExtension(fileName), destinationFormat);
+                    String converted_path = converted_directory + converted_file;
+                    logger.info("converted_path: "+converted_path);
+
+//                    String command = "asterisk -rx 'file convert " + audio_path + " " + converted_path+"'";
+//                    String[] command = {"asterisk", "-rx", "'file convert " + audio_path + " " + converted_path+"'"};
+                    String[] command = {"asterisk","-rx","\"core show license\""};
+                    logger.info("command: "+Arrays.toString(command));
+                    Process proc = Runtime.getRuntime().exec(command);
+                    BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));  
+                    String s = null;
+                    logger.info("antes de while de impresion");
+                    while ((s = stdInput.readLine()) != null) {
+                        logger.info(s);
+                    }                    
+                    
+                    logger.info("asterisk -rx 'file convert " + audio_path + " " + converted_path+"'");
+                    json.put("file_path", converted_directory);
+                    break;
+                } catch (JSONException | IOException e) {
+                    logger.info("entro excepcion CONVERT_AUDIO");
+                    logger.info(e);
+                    logger.info(e.getStackTrace());
                 }
                 
             default:

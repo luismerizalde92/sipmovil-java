@@ -6,10 +6,13 @@
 package logic;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 //import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 //import java.io.InputStreamReader;
 //import java.nio.file.Files;
 //import java.nio.file.Path;
@@ -95,6 +98,30 @@ public class AudioManager {
         return response;
     }
     
+    public static JsonObject getCompanyRecords(String record_path) throws UnsupportedAudioFileException, IOException{
+        LOGGER.info("From AudioManager.getCompanyRecords");
+        LOGGER.info("record_path: " + record_path);
+        JsonObject response = new JsonObject();
+        JsonArray companyRecords = new JsonArray();
+        File record_file = new File(record_path);
+        String[] account_names = record_file.list(); 
+        long acum_company = 0;
+        for(String account_name : account_names){
+            JsonObject account = new JsonObject();
+            LOGGER.info("cuenta: " + account_name);
+            account = getAccountInfo(record_path, account_name);
+            JsonArray accountArray = new JsonArray();
+            accountArray = account.get("records").getAsJsonArray();
+            acum_company = acum_company + account.get("size").getAsLong();
+            for (JsonElement pa : accountArray) {
+                companyRecords.add(pa);
+            }
+        }
+        response.add("records", companyRecords);
+        response.addProperty("size", acum_company);
+        return response;
+    }
+    
     public static JsonObject getAccountInfo(String record_path, String account_name) throws UnsupportedAudioFileException, IOException{
         LOGGER.info("From AudioManager.getAccountInfo");
         LOGGER.info("record_path: " + record_path + " account_name: " + account_name);
@@ -109,17 +136,24 @@ public class AudioManager {
             JsonObject record = new JsonObject();
             record.addProperty("name", account_record);
             File audio_file = new File(account_path+"/"+account_record);
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(audio_file);
-            AudioFormat format = audioInputStream.getFormat();
+            String extension = fileExtension(account_record);
             long audioFileLength = audio_file.length();
             record.addProperty("length", audioFileLength);
+            long audioFileDate = audio_file.lastModified();
+            record.addProperty("date", audioFileDate);
+            record.addProperty("date_format", dateFormat(audioFileDate));
             acum_records = acum_records + audioFileLength;
-            int frameSize = format.getFrameSize();
-            float frameRate = format.getFrameRate();
-            record.addProperty("rate", frameRate);
-            float durationInSeconds = (audioFileLength / (frameSize * frameRate));
-            Integer durationSeconds = Math.round(durationInSeconds);
-            record.addProperty("duration", durationSeconds);  
+            if (extension.equals("wav")) {            
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(audio_file);
+                AudioFormat format = audioInputStream.getFormat();            
+                int frameSize = format.getFrameSize();
+                float frameRate = format.getFrameRate();
+                record.addProperty("rate", frameRate);
+                float durationInSeconds = (audioFileLength / (frameSize * frameRate));
+                Integer durationSeconds = Math.round(durationInSeconds);
+                record.addProperty("duration", durationSeconds);  
+            }
+            record.addProperty("account", account_name);
             records.add(record);
         }
         
@@ -127,6 +161,17 @@ public class AudioManager {
         account.addProperty("size", acum_records);
         LOGGER.info(" account size:" + acum_records);
         return account;
+    }
+    
+    private static String dateFormat(long long_date){
+        Date date=new Date(long_date);
+        SimpleDateFormat df2 = new SimpleDateFormat("yy/MM/dd HH:mm:ss.SSS");
+        return df2.format(date);
+    }
+    
+    public static String fileExtension(String filename){
+        Integer lastIndex = filename.lastIndexOf(".") + 1;
+        return filename.substring(lastIndex);
     }
     
 }
