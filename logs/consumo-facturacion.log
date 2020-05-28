@@ -153,3 +153,14 @@ DEBUG 20191122120611 - [euanl59cbf] Result: {"result":{"response":true},"tx_id":
 DEBUG 20191122120849 - [j3o1ghrziy] Received request: {"send_response":false,"params":{"context_name":"company_srw7vs"},"tx_id":"j3o1ghrziy","operation":"CREATE_CONTEXT"}
 DEBUG 20191122120849 - [j3o1ghrziy] Call file sent.
 DEBUG 20191122120849 - [j3o1ghrziy] Result: {"result":{"response":true},"tx_id":"j3o1ghrziy"}
+ INFO 20200515142300 - Init to loadExecutionParameters()
+ INFO 20200515142300 - Finish to loadExecutionParameters()
+ INFO 20200515142300 - create new ServerSocket(55722)
+ INFO 20200528112614 - Init to loadExecutionParameters()
+ INFO 20200528112614 - Finish to loadExecutionParameters()
+ INFO 20200528112614 - Entro excepcion al crear el socket
+ INFO 20200528112614 - [Ljava.lang.StackTraceElement;@2d3fcdbd
+ INFO 20200528112620 - Init to loadExecutionParameters()
+ INFO 20200528112620 - Finish to loadExecutionParameters()
+ INFO 20200528112620 - Entro excepcion al crear el socket
+ INFO 20200528112620 - [Ljava.lang.StackTraceElement;@b4c966a

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import logic.Accounts;
 import logic.AudioManager;
+import logic.FileManager;
 import logic.Extensions;
 import logic.Groups;
 import logic.VoiceMail;
@@ -71,19 +72,6 @@ public class FileOperations {
                 Accounts.getCurrentAccounts(path);
                 break;
                 
-            case "ADD_ACCOUNT":      
-                System.out.println("FileOperation: ADD_ACCOUNT");
-                logger.info("FileOperation: ADD_ACCOUNT");
-                try {
-                    String account = params.getString("account");
-                    String password = params.getString("password");
-                    String context = params.getString("context");
-                    String accountFile = COMPANY_DIRECTORY+context+"/"+PJSIP_FILE;
-                    Accounts.addAccount(account, password, context, accountFile);
-                } catch (Exception e) {
-                }              
-                break;
-                
             case "DISABLE_ACCOUNT":
                 System.out.println("FileOperation: DISABLE_ACCOUNT");
                 logger.info("FileOperation: DISABLE_ACCOUNT");
@@ -92,8 +80,26 @@ public class FileOperations {
                     String context_name = params.getString("context_name");
                     String account = params.getString("account");
                     String context = params.getString("context");
+                    String parameter = "context";
                     String accountFile = COMPANY_DIRECTORY+context_name+"/"+PJSIP_FILE;
-                    Accounts.disableAccount(account, context, accountFile);
+                    Accounts.changeParameter(account, parameter, context, accountFile);
+                    break;
+                } catch (Exception e) {
+                }              
+                break;
+                
+            case "CHANGE_PARAMETER":
+                System.out.println("FileOperation: CHANGE_PARAMETER");
+                logger.info("FileOperation: CHANGE_PARAMETER");
+                try {
+                    System.out.println("CASE DISABLE_ACCOUNT");
+                    String context = params.getString("context");
+                    String account = params.getString("account");
+                    String parameter = params.getString("parameter");
+                    String value = params.getString("value");
+                    String accountFile = COMPANY_DIRECTORY+context+"/"+PJSIP_FILE;
+                    Accounts.changeParameter(account, parameter, value, accountFile);
+                    break;
                 } catch (Exception e) {
                 }              
                 break;
@@ -109,14 +115,19 @@ public class FileOperations {
 //                } catch (Exception e) {
 //                }                
                 
-            case "GET_ACCOUNT":  
+            case "GET_ACCOUNT_INFO":  
                 System.out.println("FileOperation: GET_ACCOUNT");
                 logger.info("FileOperation: GET_ACCOUNT");
                 try {
+                    String context = params.getString("context");
                     String account = params.getString("account");
-                    Accounts.getAccount(path, account);
+                    String pjsipFile = COMPANY_DIRECTORY+context+"/"+PJSIP_FILE;
+                    JsonArray lines = Accounts.getAccount(pjsipFile, account);
+                    json.put("lines", lines); //return false;
+                    
                 } catch (Exception e) {
                 }
+                break;
 //                try {
 //                    json.put("response", false); //return false;
 //                } catch (Exception ex) {
@@ -130,9 +141,11 @@ public class FileOperations {
                     String codecs = params.getString("codecs");                    
                     ArrayList<String> tempArray = Accounts.changeCodecs(path, account, codecs);                    
                     // guarda el archivo con las extensiones que no fueron eliminadas
-                    boolean ret = WriteNewFile(tempArray, path);                   
+                    boolean ret = WriteNewFile(tempArray, path); 
+                    break;
                 } catch (Exception e) {
                 }
+                break;
                 
 //            case "CREATE_CONTEXT":     
 //                System.out.println("FileOperation: CREATE_CONTEXT");
@@ -156,6 +169,7 @@ public class FileOperations {
 //                    return json.put("response", ret);
                 } catch (Exception e) {
                 }
+                break;
                 
             case "ADD_VOICEMAIL": 
                 System.out.println("FileOperation: ADD_VOICEMAIL");
@@ -267,10 +281,17 @@ public class FileOperations {
                     String context_name = params.getString("context_name");
                     String time_ring = params.getString("time_ring");
                     String account = params.getString("account");
+                    String userName = params.getString("user_name");
+//                    String codecs = params.getString("codecs");
                     String company_directory = COMPANY_DIRECTORY+context_name+"/";
                     String extensions_file = company_directory + EXTENSIONS_FILE;
-                    boolean ret = Extensions.editExtension(old_extension, new_extension, context_name, account, time_ring, extensions_file); 
                     
+                    boolean ret = Extensions.editExtension(old_extension, new_extension, 
+                            context_name, account, time_ring, extensions_file); 
+                    String pjsip_file = company_directory + PJSIP_FILE;
+                    String parameter = "callerid";
+                    String value = userName+" <"+new_extension+">";
+                    ret = Accounts.changeParameter(account, parameter, value, pjsip_file);
                     json.put("response", ret);
                     break;
                 } catch (Exception e) {
@@ -319,10 +340,11 @@ public class FileOperations {
                     String pin = params.getString("pin");
                     String name = params.getString("name"); 
                     String mail = params.getString("mail");
+                    String userName = params.getString("user_name");
                     String company_directory = COMPANY_DIRECTORY+context+"/";
                     // Creación de la nueva cuenta webrtc
                     String accountFile = company_directory+PJSIP_FILE;
-                    Accounts.addAccount(account, password, context, accountFile);
+                    Accounts.addAccount(account, password, context, accountFile, extension, userName);
                     // Creacion del directorio para almacenar las grabaciones
                     String records_folder = company_directory + RECORD_FOLDER +"/"+account+"/";
                     Runtime.getRuntime().exec("mkdir " + records_folder);
@@ -735,6 +757,31 @@ public class FileOperations {
                     logger.info("entro excepcion CONVERT_AUDIO");
                     logger.info(e);
                     logger.info(e.getStackTrace());
+                }
+                
+            case "COMPANY_STORAGE": 
+                System.out.println("FileOperation: COMPANY_STORAGE");
+                logger.info("FileOperation: COMPANY_STORAGE");
+                try {   
+                    String context = params.getString("context");
+                    JsonObject response = FileManager.getCompanyInfo(context,
+                            COMPANY_DIRECTORY, RECORD_FOLDER);
+                    json.put("company", response);
+                    break;
+                } catch (Exception e) {
+                }
+                
+            case "RELEASE_STORAGE": 
+                System.out.println("FileOperation: RELEASE_STORAGE");
+                logger.info("FileOperation: RELEASE_STORAGE");
+                try {   
+                    String context = params.getString("context");
+                    long storageLimit = params.getLong("storage_limit");
+                    JsonObject response = FileManager.deleteCompanyFiles(context,
+                            COMPANY_DIRECTORY, RECORD_FOLDER, storageLimit);
+                    json.put("company", response);
+                    break;
+                } catch (Exception e) {
                 }
                 
             default:

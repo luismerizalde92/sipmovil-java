@@ -5,6 +5,7 @@
  */
 package logic;
 
+import com.google.gson.JsonArray;
 import dsk2.json.JSONObject;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -102,35 +103,66 @@ public class Accounts {
         return json;
     }
     
-    //funcion para desactivar una cuenta
-    public static boolean disableAccount(String account, String context, String accountFile){
-        System.out.println("From Accounts.disableAccount");
-        LOGGER.info("From Accounts.disableAccount");
+    // funcion para cambiar el parametro de una cuenta
+    public static boolean changeParameter(String account, String parameter,
+            String value, String accountFile){
+        System.out.println("From Accounts.changeParameter");
+        LOGGER.info("From Accounts.changeParameter");
+        
+        Boolean existsParameter = false;
+        Boolean flg = false;
+        parameter = parameter + "=";
         ArrayList<String> tempArray = new ArrayList<>();
+        int contLines = 0;
+        int finishAccountLine = 0;
         try (FileReader fr = new FileReader(accountFile)) {
             Scanner reader = new Scanner(fr);
             String line;  
             while ( reader.hasNextLine() ) {
                 line=reader.nextLine();
+                contLines++;
                 if (line.contains("["+account+"]")) {
                     System.out.println("Entro account");
                     tempArray.add(line);
-                    boolean flg = false;
-                    while ( reader.hasNextLine() && flg == false ) {
+                    boolean flgWhile = false;
+                    while ( reader.hasNextLine() && flgWhile == false ) {
                         line=reader.nextLine();
-                        if (line.contains("context=")) {
-                            System.out.println("context=");
-                            tempArray.add("context="+context);
-                            flg = true;
+                        contLines++;
+                        if (line.startsWith(parameter)) {
+                            tempArray.add(parameter+value);
+                            existsParameter = true; 
+                        }else if (line.startsWith("[")){
+                            String nextAccount = line.trim().replace("[", "").replace("]", "");
+                                tempArray.add(line);
+//                                contLines++;
+                            if (!nextAccount.equals(account)){                                
+                                flgWhile = true;
+                            }
+                        }else if (line.length() == 0 || line.equals("")){
+                            tempArray.add(line);
+//                            contLines++;
+//                            tempArray.add("");
+                            flgWhile = true;
                         }else{
                             tempArray.add(line);
                         }
                     }
+                    if (flg == false){
+                        finishAccountLine = contLines;
+                        flg = true;
+                    }
+                    
                 }else{
                     tempArray.add(line);
                 }
             }
-            System.out.println("salio while");
+            
+            if (existsParameter == false){
+                System.out.println("Entro parametro no existe");
+                System.out.println("finishAccountLine: "+String.valueOf(finishAccountLine));
+                tempArray.add(finishAccountLine-1, parameter+value);
+            }
+            
             // cierra el archivo despues de leerlo
             fr.close();   
             
@@ -143,10 +175,12 @@ public class Accounts {
             return false;
         }
         return true;
-    }    
+    }
+
     
     // funcion para agregar una nueva cuenta
-    public static JSONObject addAccount(String account, String password, String context, String accountFile){
+    public static JSONObject addAccount(String account, String password, String context, 
+            String accountFile, String extension, String userName){
         System.out.println("from Accounts.addAccount in file "+accountFile);
         LOGGER.info("From Accounts.addAccount");
         JSONObject json = new JSONObject();
@@ -167,15 +201,18 @@ public class Accounts {
             out.println("type=endpoint");
             out.println("context="+context);
             out.println("dtls_auto_generate_cert=yes");
-            out.println("disallow=all");
-            out.println("allow=ulaw,vp8,h264,g722");
+            out.println("allow=all");
             out.println("aors="+account);
             out.println("auth="+account);
             out.println("max_audio_streams=10");
             out.println("max_video_streams=10");
             out.println("webrtc=yes");
-            out.println("dtls_ca_file=/etc/asterisk/keys/portal_publisuerte_com.crt");
-            out.println("direct_media=no\n");
+            out.println("direct_media=yes");
+            out.println("disable_direct_media_on_nat=yes");
+            out.println("force_rport=yes");
+            out.println("callerid="+userName+" <"+extension+">");
+            out.println("trust_id_inbound=yes");
+            out.println("trust_id_outbound=yes\n");
         } catch (IOException e) {
             System.out.println(Arrays.toString(e.getStackTrace()));
             LOGGER.fatal(Arrays.toString(e.getStackTrace()));
@@ -183,45 +220,6 @@ public class Accounts {
         }
         return json;
     }
-    
-    
-    
-    // funcion para agregar una nueva cuenta
-//    public static ArrayList<String> killAccount(String account, String path){
-//        System.out.println("From Accounts.deleteGroupExtension");
-//        LOGGER.info("From Accounts.deleteGroupExtension");
-//        JSONObject json = new JSONObject();
-//        ArrayList<String> tempArray = new ArrayList<>();
-//        try (FileReader fr = new FileReader(path)) {
-//            Scanner reader = new Scanner(fr);
-//            String line;  
-//            while ( reader.hasNextLine() ) {
-//                line=reader.nextLine();
-//                if (line.contains("["+account+"]")) {
-//                    boolean flag = false;
-//                    while (flag == false && reader.hasNextLine()) {                                    
-//                        line=reader.nextLine();
-//                        System.out.println(line);
-//                        if (line.length() == 0 || line == "" || line.startsWith("[")){
-//                            flag = true;
-//                        }
-//                    }
-//                    json.put("response", true);                                
-//                }else{
-//                    tempArray.add(line);
-//                }
-//            }
-//            System.out.println("salio while");
-//            // cierra el archivo despues de leerlo
-//            fr.close();            
-//            
-//        } catch (Exception e) {
-//            System.out.println(Arrays.toString(e.getStackTrace()));
-//            LOGGER.fatal(Arrays.toString(e.getStackTrace()));
-//            System.out.println(e.getMessage());
-//        }
-//        return tempArray;
-//    }
     
     public static boolean killAccount(String account, String pjsipFile){
         System.out.println("From Extensions.deleteGroupExtension");
@@ -267,10 +265,10 @@ public class Accounts {
     
     
     // funcion para ver la informacion de una cuenta
-    public static JSONObject getAccount(String path, String account){
+    public static JsonArray getAccount(String path, String account){
         System.out.println("from Accounts.getAccount");
         LOGGER.info("From Accounts.getAccount");
-        JSONObject json = new JSONObject();
+        JsonArray array = new JsonArray();
         try (FileReader fr = new FileReader(path)) {
             Scanner reader = new Scanner(fr);
             String line;                      
@@ -283,15 +281,16 @@ public class Accounts {
                     JSONObject account_params = new JSONObject();
                     while (flag == false && reader.hasNextLine()) {                                    
                         line=reader.nextLine();
-                        if (!line.equals("")){
+                        if (line.length() == 0 || line.equals("")){
                             flag = true;
-                        }else{                                        
-                            String[] lineArr = line.split("=");
-                            account_params.put(lineArr[0], lineArr[1]);
+                        }else{      
+                            array.add(line);
+//                            String[] lineArr = line.split("=");
+//                            account_params.put(lineArr[0], lineArr[1]);
                         }
                     }
-                    json.put("params", account_params);
-                    json.put("response", true);
+//                    json.put("params", account_params);
+//                    json.put("response", true);
 
                 }
             }
@@ -302,7 +301,7 @@ public class Accounts {
             LOGGER.fatal(Arrays.toString(e.getStackTrace()));
             System.out.println(e.getMessage());
         }
-        return json;
+        return array;
     }
     
     
@@ -328,7 +327,7 @@ public class Accounts {
                         if (line.length() == 0 || line == ""){
                             flag = true;
                         }else{
-                            if (line.contains("allow")) {
+                            if (line.startsWith("allow")) {
                                 tempArray.add("allow="+codecs);
                                 has_codecs = true;                                                                                        
                             }else{
