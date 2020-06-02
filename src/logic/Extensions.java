@@ -173,7 +173,7 @@ public class Extensions {
         {
             out.println("["+contextName+"]"); 
             out.println("exten => *111,1,VoiceMailMain(${CDR(src)}@"+contextName+")");
-            out.println("exten => _57X.,1,Progress()");
+            out.println("exten => _XXX.,1,Progress()");
             out.println("same => n,Gosub(outgoing-call,s,1(${EXTEN},${CONTEXT},${CDR(src)},"+sipmovil_trunk+"))");
 //            out.println("exten => _57X.,1,Progress()");
 //            out.println("exten => _57X.,2,DIAL(PJSIP/${EXTEN}@"+sipmovil_trunk+")");
