@@ -82,8 +82,11 @@ public class FileManager {
     
     private static JsonObject inspectCompany( String companyName, String companyDirectory,
             String recordsFolder, Boolean appendRecords, Boolean accountData) throws IOException{
+        System.out.println("From FileManager.inspectCompany: "+companyName +" in "+companyDirectory);
+        LOGGER.info("From FileManager.inspectCompany: "+companyName +" in "+companyDirectory);
         JsonObject response = new JsonObject();
-        Path companyPath  = Paths.get(companyDirectory,companyName,recordsFolder);
+        Path companyPath  = Paths.get(companyDirectory,companyName);
+        System.out.println(companyPath);
         File file = new File(companyPath.toString());
         String[] accountFolders = file.list();
         Integer recordCount = 0;
@@ -94,10 +97,11 @@ public class FileManager {
         JsonArray accountsArray = new JsonArray();
         
         for(String name : accountFolders){
-           Path accountPath  = Paths.get(companyDirectory,companyName,recordsFolder,name);
-
+           Path accountPath  = Paths.get(companyDirectory,companyName,name,recordsFolder); //recordsFolder
+           System.out.println("inpect folder "+accountPath);
            if (new File(accountPath.toString()).isDirectory()){
-               JsonObject resp = inspectAcccount(accountPath.toString(), name, appendRecords);
+               JsonObject resp = inspectAcccount(accountPath.toString(), name, 
+                       appendRecords);
                accountSize += resp.get("size").getAsLong();
                recordCount += resp.get("count").getAsInt();
                
@@ -132,7 +136,7 @@ public class FileManager {
     private static JsonObject inspectAcccount( String accountFolder, 
         String accountNumber, Boolean appendRecords) throws IOException{
         
-        System.out.println("inspectAcccount: "+accountNumber);
+        System.out.println("inspectAcccount: "+accountNumber+" in folder: "+accountFolder);
         
         JsonObject response = new JsonObject();
         File file = new File(accountFolder);
@@ -142,8 +146,8 @@ public class FileManager {
         JsonArray recordsArray = new JsonArray();
         
         for(String name : recordfiles){
-            
-            Path recordPath = Paths.get(accountFolder, name);
+            System.out.println("record nbame: "+name);    
+            Path recordPath = Paths.get(accountFolder,name);
             if (new File(recordPath.toString()).isFile()){
                 File record = new File(recordPath.toString());
                 if (record.length() == 0){

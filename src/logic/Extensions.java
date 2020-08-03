@@ -33,46 +33,7 @@ public class Extensions {
     private static final Logger LOGGER = SipmovilrtcConnection.logger;
     
     
-    //funcion para desactivar una cuenta
-    public static boolean editExtension(String old_extension, String new_extension, String context, String account, String time_ring, String extensionFile){
-        System.out.println("From Extensions.editExtension");
-        LOGGER.info("From Extensions.editExtension");
-        ArrayList<String> tempArray = new ArrayList<>();
-        try (FileReader fr = new FileReader(extensionFile)) {
-            Scanner reader = new Scanner(fr);
-            String line;  
-            while ( reader.hasNextLine() ) {
-                line=reader.nextLine();
-                if (line.contains("exten => "+old_extension)) {
-                    System.out.println("Entro old_extension");
-                    tempArray.add("exten => "+new_extension+",1,NoOp(Llamada entrante ${CDR(src)} a extension ${EXTEN} por canal ${CHANNEL})");
-                    tempArray.add("same => n,Set(OVERFLOW="+time_ring+")");
-                    tempArray.add("same => n,Gosub(sipmovil-extension,s,1(${EXTEN},${OVERFLOW},${CDR(dcontext)},${CONTEXT}))\n");
-                    boolean flg = false;
-                    while ( reader.hasNextLine() && flg == false ) {
-                        line=reader.nextLine();
-                        if (line.length() == 0 || line.equals("") || line.startsWith("[") || line.startsWith("exten")){
-                            flg = true;
-                        }
-                    }
-                }else{
-                    tempArray.add(line);
-                }
-            }
-            System.out.println("salio while");
-            // cierra el archivo despues de leerlo
-            fr.close();   
-            
-            boolean ret = FileOperations.WriteNewFile(tempArray, extensionFile);
-            
-        } catch (Exception e) {
-            System.out.println(Arrays.toString(e.getStackTrace()));
-            LOGGER.fatal(Arrays.toString(e.getStackTrace()));
-            System.out.println(e.getMessage());
-            return false;
-        }
-        return true;
-    }  
+     
     
     public static boolean deleteGroupExtension(String group_extension, String extensionFile){
         System.out.println("From Extensions.deleteGroupExtension: "+group_extension);
@@ -126,6 +87,7 @@ public class Extensions {
                     while ( reader.hasNextLine() && flg == false ) {
                         line=reader.nextLine();
                         if (line.length() == 0 || line.equals("") || line.startsWith("[") || line.startsWith("exten")){
+                            tempArray.add(line);
                             flg = true;
                         }
                     }
@@ -194,76 +156,82 @@ public class Extensions {
         
     }     
     
-    public static Boolean createExtension(String contextName, String extension, String timeRing, String account, String exten_file){
-        System.out.println("from Extensions.createExtension in file "+exten_file);
-        LOGGER.info("From Extensions.createExtension");
-        try(FileWriter fw = new FileWriter(exten_file, true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            PrintWriter out = new PrintWriter(bw))
-        {
-            out.println("\n");
-            out.println("exten => "+extension+",1,NoOp(Llamada entrante ${CDR(src)} a extension ${EXTEN} por canal ${CHANNEL})");
-            out.println("same => n,Set(OVERFLOW="+timeRing+")");
-            out.println("same => n,Gosub(sipmovil-extension,s,1(${EXTEN},${OVERFLOW},${CDR(dcontext)},${CONTEXT}))");
-        } catch (IOException e) {
-            System.out.println("excepcion try");
-            return false;
-        }
+    
+    public static boolean createOrUpdateExtension(String old_extension, 
+            String new_extension, String time_ring, String extensionFile) throws IOException{
         
-        return true;
+        System.out.println("From Extensions.createOrUpdateRinggroup");
+        LOGGER.info("From Extensions.createOrUpdateRinggroup");
+        
+        ArrayList<String> extensionArray = new ArrayList<>();
+        extensionArray.add("exten => "+new_extension+",1,NoOp(Llamada entrante ${CDR(src)} a extension ${EXTEN} por canal ${CHANNEL})");
+        extensionArray.add("same => n,Set(OVERFLOW="+time_ring+")");
+        extensionArray.add("same => n,Gosub(sipmovil-extension,s,1(${EXTEN},${OVERFLOW},${CDR(dcontext)},${CONTEXT}))\n");
+        
+        boolean ret = createOrUpdateExtension(extensionArray, old_extension,
+                extensionFile);
+        return ret;
     }
     
-    public static boolean createGroup(String extension, String groupName, String slugName, 
-            String overflowTime, String retryTime, String ringTime, String accounts, 
-            String strategy, String exten_file){
-        System.out.println("from Extensions.createGroup in file "+exten_file);
-        LOGGER.info("From Extensions.createGroup");
-        try(FileWriter fw = new FileWriter(exten_file, true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            PrintWriter out = new PrintWriter(bw))
-        {
-            out.println("exten => "+extension+",1,NoOp(Llamada a grupo: "+groupName+")");
-            out.println("same => n,Set(SLUG="+slugName+")");
-            out.println("same => n,Set(OVERFLOW="+overflowTime+")");
-            out.println("same => n,Set(STRATEGY="+strategy+")");
-            out.println("same => n,Set(WAIT="+retryTime+")");
-            out.println("same => n,Set(RINGTIME="+ringTime+")");
-            out.println("same => n,Set(ACCOUNTS="+"\""+accounts+"\""+")");
-            out.println("same => n,Gosub(sipmovil-ringgroup,s,1(${SLUG},${OVERFLOW},"+
-                            "${STRATEGY},${WAIT},${RINGTIME},${ACCOUNTS}))\n");
-        } catch (IOException e) {
-            System.out.println("excepcion try");
-            return false;
-        }
-        return true;
-    }
-    
-    public static boolean editGroupExtension(String old_extension, 
+  
+    public static boolean createOrUpdateRinggroup(String old_extension, 
             String new_extension, String slugName, String groupName, 
             String overflowTime, String extensionFile, String retryTime,
-            String timeout, String strategy, String accounts){
-        System.out.println("From Extensions.editGroupExtension");
-        LOGGER.info("From Extensions.editGroupExtension");
+            String timeout, String strategy, String accounts) throws IOException{
+        System.out.println("From Extensions.createOrUpdateRinggroup");
+        LOGGER.info("From Extensions.createOrUpdateRinggroup");
+        
+        ArrayList<String> extensionArray = new ArrayList<>();
+        extensionArray.add("exten => "+new_extension+",1,NoOp(Llamada a grupo: "+groupName+")");
+        extensionArray.add("same => n,Set(SLUG="+slugName+")");
+        extensionArray.add("same => n,Set(OVERFLOW="+overflowTime+")");
+        extensionArray.add("same => n,Set(STRATEGY="+strategy+")");
+        extensionArray.add("same => n,Set(WAIT="+retryTime+")");
+        extensionArray.add("same => n,Set(RINGTIME="+timeout+")");
+        extensionArray.add("same => n,Set(ACCOUNTS="+"\""+accounts+"\""+")");
+        extensionArray.add("same => n,Gosub(sipmovil-ringgroup,s,1(${SLUG},${OVERFLOW},"+
+                            "${STRATEGY},${WAIT},${RINGTIME},${ACCOUNTS}))\n");
+        
+        boolean ret = createOrUpdateExtension(extensionArray, old_extension,
+                extensionFile);
+        return ret;
+
+    } 
+    
+    public static boolean createOrUpdateIVR(String extension, String oldExtension, 
+            String ivrSlug, String extensionFile) throws IOException{
+        System.out.println("from Extensions.createOrUpdateIVR in file "+extensionFile);
+        LOGGER.info("From Extensions.createOrUpdateIVR");
+        
+        ArrayList<String> extensionArray = new ArrayList<>();
+        extensionArray.add("exten => "+extension+",1,Goto("+ivrSlug+",s,1)\n");
+        
+        boolean ret = createOrUpdateExtension(extensionArray, oldExtension,
+                extensionFile);
+        return ret;
+    }
+    
+    
+    public static boolean createOrUpdateExtension(ArrayList<String> extensionArray, 
+            String old_extension, String extensionFile) throws IOException{
+        System.out.println("From Extensions.createOrUpdateExtension");
+        LOGGER.info("From Extensions.createOrUpdateExtension");
+        
         ArrayList<String> tempArray = new ArrayList<>();
         try (FileReader fr = new FileReader(extensionFile)) {
             Scanner reader = new Scanner(fr);
             String line;  
+            boolean extensionExists = false;
             while ( reader.hasNextLine() ) {
                 line=reader.nextLine();
-                if (line.contains("exten => "+old_extension)) {
-                    tempArray.add("exten => "+new_extension+",1,NoOp(Llamada a grupo: "+groupName+")");
-                    tempArray.add("same => n,Set(SLUG="+slugName+")");
-                    tempArray.add("same => n,Set(OVERFLOW="+overflowTime+")");
-                    tempArray.add("same => n,Set(STRATEGY="+strategy+")");
-                    tempArray.add("same => n,Set(WAIT="+retryTime+")");
-                    tempArray.add("same => n,Set(RINGTIME="+timeout+")");
-                    tempArray.add("same => n,Set(ACCOUNTS="+"\""+accounts+"\""+")");
-                    tempArray.add("same => n,Gosub(sipmovil-ringgroup,s,1(${SLUG},${OVERFLOW},"+
-                            "${STRATEGY},${WAIT},${RINGTIME},${ACCOUNTS}))\n");
+                if (line.startsWith("exten => "+old_extension)) {
+                    extensionExists = true;
+                    tempArray.addAll(extensionArray);
                     boolean flg = false;
                     while ( reader.hasNextLine() && flg == false ) {
                         line=reader.nextLine();
                         if (line.length() == 0 || line.equals("") || line.startsWith("[") || line.startsWith("exten")){
+                            tempArray.add(line);
                             flg = true;
                         }
                     }
@@ -272,19 +240,17 @@ public class Extensions {
                 }
             }
             System.out.println("salio while");
+            if (extensionExists == false){
+//                tempArray.add("\n");
+                tempArray.addAll(extensionArray);
+            }
             // cierra el archivo despues de leerlo
             fr.close();   
             
             boolean ret = FileOperations.WriteNewFile(tempArray, extensionFile);
-            
-        } catch (Exception e) {
-            System.out.println(Arrays.toString(e.getStackTrace()));
-            LOGGER.fatal(Arrays.toString(e.getStackTrace()));
-            System.out.println(e.getMessage());
-            return false;
+            return ret;
         }
-        return true;
-    }  
+    }
     
     public static Boolean reloadDialplan(){
         System.out.println("Entro funcion reloadDialplan");
@@ -297,59 +263,7 @@ public class Extensions {
         }
     }
     
-    public static boolean createIVR(String extension, String ivrSlug, String exten_file){
-        System.out.println("from Extensions.createIVR in file "+exten_file);
-        LOGGER.info("From Extensions.createIVR");
-        try(FileWriter fw = new FileWriter(exten_file, true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            PrintWriter out = new PrintWriter(bw))
-        {
-            out.println("exten => "+extension+",1,Goto("+ivrSlug+",s,1)");
-        } catch (IOException e) {
-            System.out.println(Arrays.toString(e.getStackTrace()));
-            LOGGER.fatal(Arrays.toString(e.getStackTrace()));
-            System.out.println("excepcion try");
-            return false;
-        }
-        return true;
-    }
     
-    public static boolean editIVR(String extension, String oldExtension, String ivrSlug, String exten_file){
-        System.out.println("from Extensions.editIVR in file "+exten_file);
-        LOGGER.info("From Extensions.editIVR");
-        ArrayList<String> tempArray = new ArrayList<>();
-        try (FileReader fr = new FileReader(exten_file)) {
-            Scanner reader = new Scanner(fr);
-            String line;  
-            while ( reader.hasNextLine() ) {
-                line=reader.nextLine();
-                if (line.contains("exten => "+oldExtension)) {
-                    tempArray.add("exten => "+extension+",1,Goto("+ivrSlug+",s,1)");
-                    boolean flg = false;
-                    while ( reader.hasNextLine() && flg == false ) {
-                        line=reader.nextLine();
-                        if (line.length() == 0 || line.equals("") || line.startsWith("[") || line.startsWith("exten")){
-                            flg = true;
-                        }
-                    }
-                }else{
-                    tempArray.add(line);
-                }
-            }
-            System.out.println("salio while");
-            // cierra el archivo despues de leerlo
-            fr.close();   
-            
-            boolean ret = FileOperations.WriteNewFile(tempArray, exten_file);
-            
-        } catch (Exception e) {
-            System.out.println(Arrays.toString(e.getStackTrace()));
-            LOGGER.fatal(Arrays.toString(e.getStackTrace()));
-            System.out.println(e.getMessage());
-            return false;
-        }
-        return true;
-    }
     
     
     public static boolean deleteDIDs(String dids, String extensionFile){

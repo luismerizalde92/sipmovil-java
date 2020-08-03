@@ -89,6 +89,7 @@ public class Groups {
                     while ( reader.hasNextLine() && flg == false ) {
                         line=reader.nextLine();
                         if (line.length() == 0 || line.equals("") || line.startsWith("[")){
+                            tempArray.add(line);
                             flg = true;
                         }
                     }

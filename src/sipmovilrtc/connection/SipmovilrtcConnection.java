@@ -28,6 +28,7 @@ public class SipmovilrtcConnection {
     
     public static String COMPANY_DIRECTORY, PJSIP_INDEX, EXTENSIONS_INDEX, VOICEMAIL_INDEX, QUEUES_INDEX, FTP_USER;
     public static String DID_INDEX;
+    public static String ARI_FILE;
     
     public static boolean loadExecutionParameters() {
         try {
@@ -68,6 +69,7 @@ public class SipmovilrtcConnection {
             VOICEMAIL_INDEX = prop.getProperty("VOICEMAIL_INDEX");
             QUEUES_INDEX = prop.getProperty("QUEUES_INDEX");
             DID_INDEX = prop.getProperty("DIDS_INDEX");
+            ARI_FILE = prop.getProperty("ARI_FILE");
             
             FTP_USER = prop.getProperty("FTP_USER");
             

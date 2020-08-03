@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import dsk2.json.JSONException;
 import dsk2.json.JSONObject;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -29,6 +30,7 @@ public class FileOperations {
     
     private static final String EXTENSION_FOLDER = SipmovilrtcConnection.EXTENSIONS_FOLDER;
     
+    private static final String ARI_FILE = SipmovilrtcConnection.ARI_FILE;
     private static final String COMPANY_DIRECTORY = SipmovilrtcConnection.COMPANY_DIRECTORY;
     private static final String FTP_USER = SipmovilrtcConnection.FTP_USER;
     private static final Logger logger = SipmovilrtcConnection.logger;
@@ -55,7 +57,7 @@ public class FileOperations {
         }
     }
     
-    public static JSONObject execute(String tx_id, JSONObject params, String operation) {
+    public static JSONObject execute(String tx_id, JSONObject params, String operation) throws IOException {
         System.out.println(tx_id);
         System.out.println(params);
         System.out.println(operation);
@@ -205,34 +207,35 @@ public class FileOperations {
                 } catch (Exception e) {
                 }
                 
-            case "CREATE_EXTENSION": 
-                System.out.println("FileOperation: CREATE_EXTENSION");
-                logger.info("FileOperation: CREATE_EXTENSION");
-                try {
-                    String context_name = params.getString("context_name"); 
-                    String extension = params.getString("extension");
-                    String time_ring = params.getString("time_ring");
-                    String account = params.getString("account");
-                    // creacion del directorio para almacenar las grabaciones de los usuarios
-                    String company_directory = COMPANY_DIRECTORY+context_name+"/";
-                    String records_folder = company_directory + RECORD_FOLDER + account + "/";
-                    Runtime.getRuntime().exec("mkdir " + records_folder);
-                    Runtime.getRuntime().exec("sudo chown "+FTP_USER+":"+FTP_USER+" "+ records_folder);
-                    Runtime.getRuntime().exec("sudo chmod a+rwx "+records_folder);
-                    
-                    String current_file = EXTENSION_FOLDER + context_name + ".conf";
-                    boolean ret = Extensions.createExtension(context_name, extension, time_ring, account, current_file); 
-                    
-                    json.put("response", ret);
-                    break;
-                } catch (Exception e) {
-                }
+//            case "CREATE_EXTENSION": 
+//                System.out.println("FileOperation: CREATE_EXTENSION");
+//                logger.info("FileOperation: CREATE_EXTENSION");
+//                try {
+//                    String context_name = params.getString("context_name"); 
+//                    String extension = params.getString("extension");
+//                    String time_ring = params.getString("time_ring");
+//                    String account = params.getString("account");
+//                    // creacion del directorio para almacenar las grabaciones de los usuarios
+//                    String company_directory = COMPANY_DIRECTORY+context_name+"/";
+//                    String records_folder = company_directory + RECORD_FOLDER + account + "/";
+//                    Runtime.getRuntime().exec("mkdir " + records_folder);
+//                    Runtime.getRuntime().exec("sudo chown "+FTP_USER+":"+FTP_USER+" "+ records_folder);
+//                    Runtime.getRuntime().exec("sudo chmod a+rwx "+records_folder);
+//                    
+//                    String current_file = EXTENSION_FOLDER + context_name + ".conf";
+//                    boolean ret = Extensions.createExtension(context_name, extension, time_ring, account, current_file); 
+//                    
+//                    json.put("response", ret);
+//                    break;
+//                } catch (Exception e) {
+//                }
                 
             case "CREATE_COMPANY": 
                 System.out.println("FileOperation: CREATE_COMPANY");
                 logger.info("FileOperation: CREATE_COMPANY");
                 try {  
                     String context_name = params.getString("context_name");
+                    String ari_password = params.getString("ari_password");
                     String sipmovil_trunk = params.getString("sipmovil_trunk");
                     // Creación del directorio para una nueva empresa
                     String company_directory = COMPANY_DIRECTORY+context_name+"/";
@@ -247,6 +250,14 @@ public class FileOperations {
                     Runtime.getRuntime().exec("mkdir " + records_folder);
                     Runtime.getRuntime().exec("sudo chown "+FTP_USER+":"+FTP_USER+" "+ records_folder);
                     Runtime.getRuntime().exec("sudo chmod a+rwx "+records_folder);
+                    // creacion del directorio para almacenar las conversiones
+                    String converted_folder = company_directory + CONVERTED_FOLDER;
+                    Runtime.getRuntime().exec("mkdir " + converted_folder);
+                    Runtime.getRuntime().exec("sudo chown "+FTP_USER+":"+FTP_USER+" "+ converted_folder);
+                    Runtime.getRuntime().exec("sudo chmod a+rwx "+converted_folder);
+                    // Creacion del archivo donde se almacena la contraseña del cliente ARI
+                    String ari_file = ARI_FILE;
+                    Accounts.addARICompany(context_name, ari_password, ari_file);
                     // creacion del archivo donde se almacenaran los clientes PJSIP
                     String pjsip_file = company_directory + PJSIP_FILE;
                     Runtime.getRuntime().exec("touch " + pjsip_file);
@@ -261,10 +272,7 @@ public class FileOperations {
                     String voicemail_file = company_directory + VOICEMAIL_FILE;
                     Runtime.getRuntime().exec("touch " + voicemail_file);
                     VoiceMail.addContext(context_name, voicemail_file);
-                    // creacion del archivo donde se almacenaran los grupos
-                    String queues_file = company_directory + QUEUES_FILE;
-                    Runtime.getRuntime().exec("touch " + queues_file);
-                    Groups.addContext(queues_file);          
+                             
 
                     json.put("response", true);
                     break;
@@ -283,15 +291,18 @@ public class FileOperations {
                     String account = params.getString("account");
                     String userName = params.getString("user_name");
 //                    String codecs = params.getString("codecs");
+
                     String company_directory = COMPANY_DIRECTORY+context_name+"/";
-                    String extensions_file = company_directory + EXTENSIONS_FILE;
+                    // Estas lineas solo se ejecutaran para para el manejo de la extension
+                    // cuando no la aplicacion no esté usando la interfaz ARI de asterisk                    
+//                    String extensions_file = company_directory + EXTENSIONS_FILE;                    
+//                    boolean ret = Extensions.createOrUpdateExtension(old_extension, new_extension, 
+//                            time_ring, extensions_file);
                     
-                    boolean ret = Extensions.editExtension(old_extension, new_extension, 
-                            context_name, account, time_ring, extensions_file); 
                     String pjsip_file = company_directory + PJSIP_FILE;
                     String parameter = "callerid";
                     String value = userName+" <"+new_extension+">";
-                    ret = Accounts.changeParameter(account, parameter, value, pjsip_file);
+                    boolean ret = Accounts.changeParameter(account, parameter, value, pjsip_file);
                     json.put("response", ret);
                     break;
                 } catch (Exception e) {
@@ -346,16 +357,18 @@ public class FileOperations {
                     String accountFile = company_directory+PJSIP_FILE;
                     Accounts.addAccount(account, password, context, accountFile, extension, userName);
                     // Creacion del directorio para almacenar las grabaciones
-                    String records_folder = company_directory + RECORD_FOLDER +"/"+account+"/";
-                    Runtime.getRuntime().exec("mkdir " + records_folder);
-                    Runtime.getRuntime().exec("sudo chown "+FTP_USER+":"+FTP_USER+" "+ records_folder);
-                    Runtime.getRuntime().exec("sudo chmod a+rwx "+records_folder);
+                    // Estas lineas solo se ejecutaran para para el manejo de la extension
+                    // cuando no la aplicacion no esté usando la interfaz ARI de asterisk
+//                    String records_folder = company_directory + RECORD_FOLDER +"/"+account+"/";
+//                    Runtime.getRuntime().exec("mkdir " + records_folder);
+//                    Runtime.getRuntime().exec("sudo chown "+FTP_USER+":"+FTP_USER+" "+ records_folder);
+//                    Runtime.getRuntime().exec("sudo chmod a+rwx "+records_folder);
                     // creacion de la extension para cuenta webrtc
-                    String extensions_file = company_directory + EXTENSIONS_FILE;
-                    Extensions.createExtension(context, extension, time_ring, account, extensions_file);                    
+//                    String extensions_file = company_directory + EXTENSIONS_FILE;
+//                    Extensions.createOrUpdateExtension("no-ext", extension, time_ring, extensions_file);                    
                     // creacion del archivo donde se almacenaran los correos de las extenciones
-                    String voicemail_file = company_directory + VOICEMAIL_FILE;
-                    VoiceMail.addVoiceMail(context, account, pin, name, mail, voicemail_file);
+//                    String voicemail_file = company_directory + VOICEMAIL_FILE;
+//                    VoiceMail.addVoiceMail(context, account, pin, name, mail, voicemail_file);
        
 
                     json.put("response", true);
@@ -363,55 +376,9 @@ public class FileOperations {
                 } catch (Exception e) {
                 }
                 
-            case "CREATE_GROUP": 
-                System.out.println("FileOperation: CREATE_GROUP");
-                logger.info("FileOperation: CREATE_GROUP");
-                try {  
-                    String context = params.getString("context");
-                    String retryTime = params.getString("retryTime");
-                    String timeout = params.getString("timeout");
-                    String strategy = params.getString("strategy");
-                    String extension = params.getString("extension");
-                    String groupName = params.getString("groupName");
-                    String slugName = params.getString("slugName");
-                    String overflowTime = params.getString("overflowTime");
-                    String accounts = params.getString("accounts");
-                    String company_directory = COMPANY_DIRECTORY+context+"/";
-                    // Creación del grupo en el respectivo archivo queue.conf
-                    //String queueFile = company_directory+QUEUES_FILE;
-                    //Groups.addGroup(slugName, retryTime, timeout, strategy, queueFile);
-                    // creacion de la extension para para el grupo de timbrado
-                    String extensions_file = company_directory + EXTENSIONS_FILE;
-                    Extensions.createGroup(extension, groupName, slugName, overflowTime, 
-                            retryTime, timeout, accounts, strategy, extensions_file);                    
-                    
-                    json.put("response", true);
-                    break;
-                } catch (Exception e) {
-                }
-                
-            case "EDIT_GROUP": 
-                System.out.println("FileOperation: EDIT_GROUP");
-                logger.info("FileOperation: EDIT_GROUP");
-                try {  
-                    String context = params.getString("context");
-                    String slugName = params.getString("slugName");
-                    String retryTime = params.getString("retryTime");
-                    String timeout = params.getString("timeout");
-                    String strategy = params.getString("strategy");
-                    String company_directory = COMPANY_DIRECTORY+context+"/";
-                    // Actualizacion de la extension para para el grupo de timbrado
-                    String queueFile = company_directory+QUEUES_FILE;
-                    Groups.editGroup(slugName, retryTime, timeout, strategy, queueFile);                    
-                    
-                    json.put("response", true);
-                    break;
-                } catch (Exception e) {
-                }
-                
-            case "EDIT_GROUP_EXTENSION": 
+            case "CREATE_OR_UPDATE_RINGGROUP": 
                 System.out.println("FileOperation: EDIT_GROUP_EXTENSION");
-                logger.info("FileOperation: EDIT_GROUP_EXTENSION");
+                logger.info("FileOperation: CREATE_OR_UPDATE_RINGGROUP");
                 try {  
                     String context = params.getString("context");
                     String old_extension = params.getString("old_extension");
@@ -426,7 +393,7 @@ public class FileOperations {
                     String company_directory = COMPANY_DIRECTORY+context+"/";
                     // Actualizacion de la extension para para el grupo de timbrado
                     String extensions_file = company_directory+EXTENSIONS_FILE;
-                    Extensions.editGroupExtension(old_extension, new_extension,
+                    Extensions.createOrUpdateRinggroup(old_extension, new_extension,
                             slugName, groupName, overflowTime, extensions_file,
                             retryTime, timeout, strategy, accounts);                    
                     
@@ -472,11 +439,11 @@ public class FileOperations {
                     String company_directory = COMPANY_DIRECTORY+context+"/";
                     // creacion de la extension para el ivr
                     String extensions_file = company_directory + EXTENSIONS_FILE;
-                    Extensions.createIVR(extension, ivrSlug, extensions_file);
+                    Extensions.createOrUpdateIVR(extension, extension, ivrSlug, extensions_file);
                     // creacion de la logica del ivr
                     String ivr_file = company_directory + IVRS_FILE;
                     String audio_path = company_directory + AUDIO_FOLDER + audio_name;
-                    Ivrs.createIvr(ivrSlug, audio_path, ivr_name, wait_time, 
+                    Ivrs.createOrUpdateIVR(ivrSlug, audio_path, ivr_name, wait_time, 
                         options, timezone, ivr_file, data_input, context, 
                         action, call_extension);
                     json.put("response", true);
@@ -508,14 +475,14 @@ public class FileOperations {
                     // edicion de la extension para el ivr
                     if (extension.equals(before_extension) == false) {
                         String extensions_file = company_directory + EXTENSIONS_FILE;
-                        Extensions.editIVR(extension, before_extension, ivrSlug, 
+                        Extensions.createOrUpdateIVR(extension, before_extension, ivrSlug, 
                                 extensions_file);
                     }
                     
                     // creacion de la logica del ivr
                     String ivr_file = company_directory + IVRS_FILE;
                     String audio_path = company_directory + AUDIO_FOLDER + audio_name;
-                    Ivrs.editIVR(ivrSlug, audio_path, ivr_name, wait_time, 
+                    Ivrs.createOrUpdateIVR(ivrSlug, audio_path, ivr_name, wait_time, 
                             options, timezone, ivr_file, data_input, context, 
                             action, call_extension);
                     json.put("response", true);
@@ -531,20 +498,31 @@ public class FileOperations {
                 System.out.println("FileOperation: DELETE_IVR");
                 logger.info("FileOperation: DELETE_IVR");
                 try {  
+                    Gson gson = new Gson();
                     String context = params.getString("context");
                     String extension = params.getString("extension");
                     String ivrSlug = params.getString("ivrSlug");
-                    String audio_name = params.getString("audio_name");
-                    String company_directory = COMPANY_DIRECTORY+context+"/";
-                    String audio_path = COMPANY_DIRECTORY+context+"/"+AUDIO_FOLDER+audio_name;
+                    String audios = params.getString("audios");
+                    JsonArray audiosArray = gson.fromJson(audios, JsonArray.class);
+                    String company_directory = COMPANY_DIRECTORY+context+"/";                    
                     // Eliminar extension del grupo de timbrado
                     String extensions_file = company_directory + EXTENSIONS_FILE;
                     Extensions.deleteGroupExtension(extension, extensions_file);                    
                     // Eliminar el ivr del archivo ivr.conf
                     String ivrs_file = company_directory + IVRS_FILE;
                     Ivrs.deleteIvr(ivrSlug, ivrs_file);
-                    // Eliminar archivo de audio del la carpeta de sonidos
-                    Runtime.getRuntime().exec("rm " + audio_path);
+                    // Eliminar archivos de audio
+                    String audio_folder = COMPANY_DIRECTORY+context+"/"+AUDIO_FOLDER;
+                    for (int i = 0; i < audiosArray.size(); i++) {
+                        String element = audiosArray.get(i).getAsString();
+                        System.out.println("Eliminando audio: "+element);
+                        logger.info("Eliminando audio: "+element); 
+                        File file = new File(audio_folder+element); 
+                        file.delete();
+//                        Runtime.getRuntime().exec("sudo rm -f" + audio_folder+element);
+                        System.out.println("Paso elimino audio: "+audio_folder+element);
+                    }
+                    
                     json.put("response", true);
                     break;
                 } catch (Exception e) {

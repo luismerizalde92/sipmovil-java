@@ -221,6 +221,26 @@ public class Accounts {
         return json;
     }
     
+    public static Boolean addARICompany(String user, String password, String ariFile){
+        System.out.println("from Accounts.addARICompany");
+        LOGGER.info("From Accounts.addAccount");
+        JSONObject json = new JSONObject();
+        try(FileWriter fw = new FileWriter(ariFile, true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            PrintWriter out = new PrintWriter(bw))
+        {
+            out.println("\n["+user+"]");
+            out.println("type=user");
+            out.println("read_only=no");
+            out.println("password="+password+"\n");
+        } catch (IOException e) {
+            System.out.println(Arrays.toString(e.getStackTrace()));
+            LOGGER.fatal(Arrays.toString(e.getStackTrace()));
+            System.out.println("excepcion try");
+        }
+        return true;
+    }
+    
     public static boolean killAccount(String account, String pjsipFile){
         System.out.println("From Extensions.deleteGroupExtension");
         LOGGER.info("From Extensions.deleteGroupExtension");
