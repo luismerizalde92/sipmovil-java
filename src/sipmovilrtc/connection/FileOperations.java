@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import logic.Accounts;
+import logic.Asterisk;
 import logic.AudioManager;
 import logic.FileManager;
 import logic.Extensions;
@@ -234,26 +235,33 @@ public class FileOperations {
                 System.out.println("FileOperation: CREATE_COMPANY");
                 logger.info("FileOperation: CREATE_COMPANY");
                 try {  
+                    
                     String context_name = params.getString("context_name");
                     String ari_password = params.getString("ari_password");
                     String sipmovil_trunk = params.getString("sipmovil_trunk");
+                    String ftp_user = params.getString("ftp_user");
+                    String accounts = params.getString("accounts");
+                    Gson gson = new Gson();
+                    JsonArray accountsArray = gson.fromJson(accounts, JsonArray.class);                  
+                    
                     // Creación del directorio para una nueva empresa
                     String company_directory = COMPANY_DIRECTORY+context_name+"/";
                     Runtime.getRuntime().exec("mkdir " + company_directory);
                     // creacion del directorio para almacenar los srchivos de audio
                     String audio_folder = company_directory + AUDIO_FOLDER;
                     Runtime.getRuntime().exec("mkdir " + audio_folder);
-                    Runtime.getRuntime().exec("sudo chown "+FTP_USER+":"+FTP_USER+" "+ audio_folder);
+                    Runtime.getRuntime().exec("sudo chown "+ftp_user+":"+ftp_user+" "+ audio_folder);
                     Runtime.getRuntime().exec("sudo chmod a+rwx "+audio_folder);
-                    // creacion del directorio para almacenar las grabaciones de los usuarios
-                    String records_folder = company_directory + RECORD_FOLDER;
-                    Runtime.getRuntime().exec("mkdir " + records_folder);
-                    Runtime.getRuntime().exec("sudo chown "+FTP_USER+":"+FTP_USER+" "+ records_folder);
-                    Runtime.getRuntime().exec("sudo chmod a+rwx "+records_folder);
+                    /*creacion del directorio para almacenar las grabaciones 
+                    de los usuarios (si no se usa ARI) */
+//                    String records_folder = company_directory + RECORD_FOLDER;
+//                    Runtime.getRuntime().exec("mkdir " + records_folder);
+//                    Runtime.getRuntime().exec("sudo chown "+FTP_USER+":"+FTP_USER+" "+ records_folder);
+//                    Runtime.getRuntime().exec("sudo chmod a+rwx "+records_folder);
                     // creacion del directorio para almacenar las conversiones
                     String converted_folder = company_directory + CONVERTED_FOLDER;
                     Runtime.getRuntime().exec("mkdir " + converted_folder);
-                    Runtime.getRuntime().exec("sudo chown "+FTP_USER+":"+FTP_USER+" "+ converted_folder);
+                    Runtime.getRuntime().exec("sudo chown "+ftp_user+":"+ftp_user+" "+ converted_folder);
                     Runtime.getRuntime().exec("sudo chmod a+rwx "+converted_folder);
                     // Creacion del archivo donde se almacena la contraseña del cliente ARI
                     String ari_file = ARI_FILE;
@@ -262,16 +270,32 @@ public class FileOperations {
                     String pjsip_file = company_directory + PJSIP_FILE;
                     Runtime.getRuntime().exec("touch " + pjsip_file);
                     Accounts.addContext(pjsip_file);
+                    
+                    // add account if company changes server
+                    
+                    for (int i = 0; i < accountsArray.size(); i++) {
+                        
+                        JsonObject element = accountsArray.get(i).getAsJsonObject();
+                        String account = element.get("account").getAsString();
+                        String password = element.get("password").getAsString();
+                        String extension = element.get("extension").getAsString();
+                        String user_name = element.get("user_name").getAsString();
+                        String context = element.get("context").getAsString();
+                        Accounts.addAccount(account, password, context, 
+                                pjsip_file, extension, user_name);
+                    }
+                    
                     // creacion del archivo donde se almacenaran las extensiones
                     String extensions_file = company_directory + EXTENSIONS_FILE;
                     String ivrs_file = company_directory + IVRS_FILE;
                     Runtime.getRuntime().exec("touch " + extensions_file);
                     Runtime.getRuntime().exec("touch " + ivrs_file);
                     Extensions.addContext(context_name, extensions_file, sipmovil_trunk, ivrs_file);                    
-                    // creacion del archivo donde se almacenaran los correos de las extenciones
-                    String voicemail_file = company_directory + VOICEMAIL_FILE;
-                    Runtime.getRuntime().exec("touch " + voicemail_file);
-                    VoiceMail.addContext(context_name, voicemail_file);
+                    /* creacion del archivo donde se almacenaran los correos de 
+                    las extenciones (Si no se esta usando ari) */
+//                    String voicemail_file = company_directory + VOICEMAIL_FILE;
+//                    Runtime.getRuntime().exec("touch " + voicemail_file);
+//                    VoiceMail.addContext(context_name, voicemail_file);
                              
 
                     json.put("response", true);
@@ -439,7 +463,10 @@ public class FileOperations {
                     String company_directory = COMPANY_DIRECTORY+context+"/";
                     // creacion de la extension para el ivr
                     String extensions_file = company_directory + EXTENSIONS_FILE;
-                    Extensions.createOrUpdateIVR(extension, extension, ivrSlug, extensions_file);
+                    
+                    // Descomentar la linea inferior para usar el dialplan
+                    // Extensions.createOrUpdateIVR(extension, extension, ivrSlug, extensions_file);
+                    
                     // creacion de la logica del ivr
                     String ivr_file = company_directory + IVRS_FILE;
                     String audio_path = company_directory + AUDIO_FOLDER + audio_name;
@@ -472,12 +499,12 @@ public class FileOperations {
                     String action = params.getString("action");
                     Boolean call_extension = params.getBoolean("call_extension");
                     String company_directory = COMPANY_DIRECTORY+context+"/";
-                    // edicion de la extension para el ivr
-                    if (extension.equals(before_extension) == false) {
-                        String extensions_file = company_directory + EXTENSIONS_FILE;
-                        Extensions.createOrUpdateIVR(extension, before_extension, ivrSlug, 
-                                extensions_file);
-                    }
+                    // edicion de la extension para el ivr si se esta usando el dialplan
+//                    if (extension.equals(before_extension) == false) {
+//                        String extensions_file = compan|y_directory + EXTENSIONS_FILE;
+//                        Extensions.createOrUpdateIVR(extension, before_extension, ivrSlug, 
+//                                extensions_file);
+//                    }
                     
                     // creacion de la logica del ivr
                     String ivr_file = company_directory + IVRS_FILE;
@@ -505,9 +532,9 @@ public class FileOperations {
                     String audios = params.getString("audios");
                     JsonArray audiosArray = gson.fromJson(audios, JsonArray.class);
                     String company_directory = COMPANY_DIRECTORY+context+"/";                    
-                    // Eliminar extension del grupo de timbrado
-                    String extensions_file = company_directory + EXTENSIONS_FILE;
-                    Extensions.deleteGroupExtension(extension, extensions_file);                    
+                    // Eliminar extension del grupo de timbrado si se esta usando el dialplan
+//                    String extensions_file = company_directory + EXTENSIONS_FILE;
+//                    Extensions.deleteGroupExtension(extension, extensions_file);                    
                     // Eliminar el ivr del archivo ivr.conf
                     String ivrs_file = company_directory + IVRS_FILE;
                     Ivrs.deleteIvr(ivrSlug, ivrs_file);
@@ -758,6 +785,34 @@ public class FileOperations {
                     JsonObject response = FileManager.deleteCompanyFiles(context,
                             COMPANY_DIRECTORY, RECORD_FOLDER, storageLimit);
                     json.put("company", response);
+                    break;
+                } catch (Exception e) {
+                }
+                
+            case "CREATE_MANAGER": 
+                System.out.println("FileOperation: CREATE_MANAGER");
+                logger.info("FileOperation: CREATE_MANAGER");
+                try {  
+                    String user = params.getString("user");
+                    String password = params.getString("password");
+                    String ip = params.getString("ip");
+                    String prev_user = params.getString("prev_user");
+
+                    boolean ret = Asterisk.addManagerUser(user, ip, password, prev_user);
+                    
+                    json.put("response", ret);
+                    break;
+                } catch (Exception e) {
+                }
+                
+            case "DELETE_MANAGER": 
+                System.out.println("FileOperation: DELETE_MANAGER");
+                logger.info("FileOperation: DELETE_MANAGER");
+                try {  
+                    String user = params.getString("user");
+                    boolean ret = Asterisk.deleteManagerUser(user);
+                    
+                    json.put("response", ret);
                     break;
                 } catch (Exception e) {
                 }

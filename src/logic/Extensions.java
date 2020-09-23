@@ -134,11 +134,22 @@ public class Extensions {
             PrintWriter out = new PrintWriter(bw))
         {
             out.println("["+contextName+"]"); 
-            out.println("exten => *111,1,VoiceMailMain(${CDR(src)}@"+contextName+")");
-            out.println("exten => _XXX.,1,Progress()");
-            out.println("same => n,Gosub(outgoing-call,s,1(${EXTEN},${CONTEXT},${CDR(src)},"+sipmovil_trunk+"))");
-//            out.println("exten => _57X.,1,Progress()");
-//            out.println("exten => _57X.,2,DIAL(PJSIP/${EXTEN}@"+sipmovil_trunk+")");
+            out.println("\n");
+            out.println("exten => 6002,1,Verbose()");
+            out.println("same => n,Stasis(change-app,${CONTEXT},${EXTEN})");
+            out.println("same => n,Hangup()");
+            out.println("\n");
+            out.println("exten => _XXX,1,Verbose(Enter to sipmovil bridge stasis inbound)");
+            out.println("same => n,Verbose(call from ${CDR(src)} to extension ${EXTEN})");
+            out.println("same => n,Stasis(sipmovil-router,${CONTEXT},${CDR(src)},${EXTEN})");
+            out.println("same => n(ivr),Verbose(Enter to extension type IVR, the value of SIPMOVIL_DST: ${SIPMOVIL_DST})");
+            out.println("same => n,Goto(${SIPMOVIL_DST},s,1)");
+            out.println("same => n,Hangup()");
+            out.println("\n");
+            out.println("exten => _XXX.,1,Verbose(Enter to sipmovil bridge stasis outgoing)");
+            out.println("same => n,Verbose(call from ${CDR(src)} to extension ${EXTEN})");
+            out.println("same => n,Stasis(sipmovil-bridge,outgoing,${CONTEXT},${EXTEN},${CDR(src)},no_call_id,no)");
+            out.println("same => n,Hangup()");
 
             
         } catch (IOException e) {

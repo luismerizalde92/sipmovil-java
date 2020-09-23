@@ -221,25 +221,68 @@ public class Accounts {
         return json;
     }
     
-    public static Boolean addARICompany(String user, String password, String ariFile){
+    public static Boolean addARICompany(String user, String password, String ariFile) throws IOException{
         System.out.println("from Accounts.addARICompany");
         LOGGER.info("From Accounts.addAccount");
-        JSONObject json = new JSONObject();
-        try(FileWriter fw = new FileWriter(ariFile, true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            PrintWriter out = new PrintWriter(bw))
-        {
-            out.println("\n["+user+"]");
-            out.println("type=user");
-            out.println("read_only=no");
-            out.println("password="+password+"\n");
-        } catch (IOException e) {
-            System.out.println(Arrays.toString(e.getStackTrace()));
-            LOGGER.fatal(Arrays.toString(e.getStackTrace()));
-            System.out.println("excepcion try");
-        }
-        return true;
+        
+        
+        ArrayList<String> ariArray = new ArrayList<>();        
+     
+        ariArray.add("\n["+user+"]");
+        ariArray.add("type=user");
+        ariArray.add("read_only=no");
+        ariArray.add("password="+password+"\n");
+
+        boolean ret = createUpdateDeleteAri(ariArray, user, 
+            ariFile, false);
+
+        return ret;
     }
+    
+    public static boolean createUpdateDeleteAri(ArrayList<String> ariArray, 
+            String user, String ariFile, boolean delete) throws IOException{
+        System.out.println("From Accounts.createUpdateDeleteAri");
+        LOGGER.info("From Accounts.createUpdateDeleteAri");
+        
+        ArrayList<String> tempArray = new ArrayList<>();
+        try (FileReader fr = new FileReader(ariFile)) {
+            Scanner reader = new Scanner(fr);
+            String line;  
+            boolean extensionExists = false;
+            while ( reader.hasNextLine() ) {
+                line=reader.nextLine();
+                if (line.contains("["+user+"]")) {
+                    extensionExists = true;
+                    if (delete == false) {
+                        System.out.println("ENTRO primera adicion");
+                        tempArray.addAll(ariArray);
+                    }                    
+                    boolean flg = false;
+                    while ( reader.hasNextLine() && flg == false ) {
+                        line=reader.nextLine();
+                        if (line.length() == 0 || line.equals("") || line.startsWith("[")){
+                            tempArray.add(line);
+                            flg = true;
+                        }
+                    }
+                }else{
+                    tempArray.add(line);
+                }
+            }
+            System.out.println("salio while");
+            if (extensionExists == false && delete == false){
+                System.out.println("ENTRO segunda adicion");
+                tempArray.addAll(ariArray);
+            }
+            // cierra el archivo despues de leerlo
+            fr.close();   
+            
+            boolean ret = FileOperations.WriteNewFile(tempArray, ariFile);
+            return ret;
+        }
+    }
+    
+    
     
     public static boolean killAccount(String account, String pjsipFile){
         System.out.println("From Extensions.deleteGroupExtension");
@@ -281,8 +324,7 @@ public class Accounts {
         }
         return true;
     }
-    
-    
+        
     
     // funcion para ver la informacion de una cuenta
     public static JsonArray getAccount(String path, String account){
