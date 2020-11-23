@@ -146,10 +146,15 @@ public class Extensions {
             out.println("same => n,Goto(${SIPMOVIL_DST},s,1)");
             out.println("same => n,Hangup()");
             out.println("\n");
-            out.println("exten => _XXX.,1,Verbose(Enter to sipmovil bridge stasis outgoing)");
+            out.println("exten => _[+0-9]XX.,1,Verbose(Enter to sipmovil bridge stasis outgoing)");
             out.println("same => n,Verbose(call from ${CDR(src)} to extension ${EXTEN})");
             out.println("same => n,Stasis(sipmovil-bridge,outgoing,${CONTEXT},${EXTEN},${CDR(src)},no_call_id,no)");
             out.println("same => n,Hangup()");
+            out.println("\n");
+            out.println("exten => _.,1,Verbose(The number ${EXTEN} is an invalid extension in ${CONTEXT} context)");
+            out.println("same => n,GotoIf($[\"${EXTEN}\" = \"h\"]?finish)");
+            out.println("same => n,Stasis(sipmovil-bridge,outgoing,${CONTEXT},invalid,${CDR(src)},no_call_id,no)");
+            out.println("same => n(finish),Hangup()");
 
             
         } catch (IOException e) {

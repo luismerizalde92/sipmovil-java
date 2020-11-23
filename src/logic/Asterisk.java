@@ -32,7 +32,7 @@ public class Asterisk {
        
         ArrayList<String> managerArray = new ArrayList<>();
         
-        if (user == prev_user){
+        if (user.equals(prev_user)){
             managerArray.add("\n");
         }        
         managerArray.add("["+user+"]");

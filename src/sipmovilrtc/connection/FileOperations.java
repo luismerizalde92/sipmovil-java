@@ -641,14 +641,14 @@ public class FileOperations {
                     String account = params.getString("account");
                     String company_directory = COMPANY_DIRECTORY+context+"/";
                     //eliminar extension
-                    String extension_file = company_directory + EXTENSIONS_FILE;
-                    Extensions.deleteGroupExtension(extension, extension_file);
+//                    String extension_file = company_directory + EXTENSIONS_FILE;
+//                    Extensions.deleteGroupExtension(extension, extension_file);
                     //eliminar cuenta pjsip
                     String pjsip_file = company_directory + PJSIP_FILE;
                     Accounts.killAccount(account, pjsip_file);
                     //eliminar cuenta voicemail
-                    String voicemail_file = company_directory + VOICEMAIL_FILE;
-                    VoiceMail.deleteVoicemail(account, voicemail_file);
+//                    String voicemail_file = company_directory + VOICEMAIL_FILE;
+//                    VoiceMail.deleteVoicemail(account, voicemail_file);
                     
                     json.put("response", true);
                     break;
