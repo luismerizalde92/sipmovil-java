@@ -33,6 +33,7 @@ public class FileOperations {
     
     private static final String ARI_FILE = SipmovilrtcConnection.ARI_FILE;
     private static final String COMPANY_DIRECTORY = SipmovilrtcConnection.COMPANY_DIRECTORY;
+    private static final String RECORDS_DIRECTORY = SipmovilrtcConnection.RECORDS_DIRECTORY;
     private static final String FTP_USER = SipmovilrtcConnection.FTP_USER;
     private static final Logger logger = SipmovilrtcConnection.logger;
     private static final String PJSIP_FILE = "pjsip.conf";
@@ -662,7 +663,7 @@ public class FileOperations {
                     String context = params.getString("context");
                     String filename = params.getString("filename");
                     String account = params.getString("account");
-                    String record_folder = COMPANY_DIRECTORY+context+"/";
+                    String record_folder = RECORDS_DIRECTORY+context+"/";
                     record_folder = record_folder+RECORD_FOLDER+account+"/";
                     String audio_file = record_folder+filename;
                     //eliminar extension
@@ -770,7 +771,7 @@ public class FileOperations {
                 try {   
                     String context = params.getString("context");
                     JsonObject response = FileManager.getCompanyInfo(context,
-                            COMPANY_DIRECTORY, RECORD_FOLDER);
+                            RECORDS_DIRECTORY, RECORD_FOLDER);
                     json.put("company", response);
                     break;
                 } catch (Exception e) {
@@ -783,7 +784,7 @@ public class FileOperations {
                     String context = params.getString("context");
                     long storageLimit = params.getLong("storage_limit");
                     JsonObject response = FileManager.deleteCompanyFiles(context,
-                            COMPANY_DIRECTORY, RECORD_FOLDER, storageLimit);
+                            RECORDS_DIRECTORY, RECORD_FOLDER, storageLimit);
                     json.put("company", response);
                     break;
                 } catch (Exception e) {

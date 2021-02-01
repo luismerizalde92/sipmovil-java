@@ -31,7 +31,7 @@ import sipmovilrtc.connection.SipmovilrtcConnection;
  */
 public class AudioManager {
     
-    private static final String COMPANY_DIRECTORY = SipmovilrtcConnection.COMPANY_DIRECTORY;
+    private static final String COMPANY_DIRECTORY = SipmovilrtcConnection.RECORDS_DIRECTORY;
     private static final Logger LOGGER = SipmovilrtcConnection.logger;
     private static final String RECORDS_FOLDER = "records/";
     

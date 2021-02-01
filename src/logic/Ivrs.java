@@ -80,6 +80,9 @@ public class Ivrs {
             extensionArray.add("same => n(loop),Playback("+audioPath+")");
             extensionArray.add(action);
         }
+        
+        extensionArray.add("exten => h,1,NoOp(Pressed hangup)");
+        extensionArray.add("same => n,Stasis(sipmovil-bridge,end_ivr_call,${SIPMOVIL_CALL_ID},${SIPMOVIL_CALL_CONTEXT})");
 
         boolean ret = createOrUpdateExtension(extensionArray, slugName,
                 ivrFile);

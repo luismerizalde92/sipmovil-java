@@ -109,13 +109,46 @@ public class FileManager {
                    JsonArray recordsArray = resp.getAsJsonArray("records");                 
                    for (int i = 0; i < recordsArray.size(); i++) {
                        JsonElement record = recordsArray.get(i);
-                       JsonObject rr = recordsArray.get(i).getAsJsonObject();
                        companyRecordsArray.add(record);
                    }                   
                }
                
                if (accountData) {
                    accountsArray.add(resp);
+               }
+               
+           }
+           
+           // inspect the accounts voicemail
+           Path voicemailPath  = Paths.get(companyDirectory,companyName,name,"voicemail");
+           System.out.println("inpect folder "+voicemailPath);
+           if (new File(voicemailPath.toString()).isDirectory()){
+               JsonObject resp = inspectAcccount(voicemailPath.toString(), name, 
+                       appendRecords);
+               accountSize += resp.get("size").getAsLong();
+               recordCount += resp.get("count").getAsInt();
+               
+               if (appendRecords){
+                   JsonArray recordsArray = resp.getAsJsonArray("records");                 
+                   for (int i = 0; i < recordsArray.size(); i++) {
+                       JsonElement record = recordsArray.get(i);
+                       companyRecordsArray.add(record);
+                   }                   
+               }
+               
+               if (accountData) {
+                   for (int i = 0; i < accountsArray.size(); i++) {
+                       JsonObject account = accountsArray.get(i).getAsJsonObject();
+                       if (account.get("account").getAsString().equals(name)){
+                           Integer currentCount = account.get("count").getAsInt();
+                           currentCount += resp.get("count").getAsInt();
+                           long currentSize = account.get("size").getAsLong();
+                           currentSize += resp.get("size").getAsLong();
+                           account.addProperty("count", currentCount);
+                           account.addProperty("size", currentSize);
+                       }
+                   }
+//                   accountsArray.add(resp);
                }
                
            }

@@ -26,7 +26,7 @@ public class SipmovilrtcConnection {
     public static String EXTENSIONS_FILE, PJSIP_FILE, VOICEMAIL_FILE, EXTENSIONS_FOLDER;
     public static String GROUPS_FILE, GROUPS_FOLDER;
     
-    public static String COMPANY_DIRECTORY, PJSIP_INDEX, EXTENSIONS_INDEX, VOICEMAIL_INDEX, QUEUES_INDEX, FTP_USER;
+    public static String COMPANY_DIRECTORY, PJSIP_INDEX, EXTENSIONS_INDEX, VOICEMAIL_INDEX, QUEUES_INDEX, FTP_USER, RECORDS_DIRECTORY;
     public static String DID_INDEX;
     public static String ARI_FILE;
     
@@ -64,6 +64,7 @@ public class SipmovilrtcConnection {
             GROUPS_FOLDER = prop.getProperty("GROUPS_FOLDER");
             
             COMPANY_DIRECTORY = prop.getProperty("COMPANY_DIRECTORY");
+            RECORDS_DIRECTORY = prop.getProperty("RECORDS_DIRECTORY");
             PJSIP_INDEX = prop.getProperty("PJSIP_INDEX");
             EXTENSIONS_INDEX = prop.getProperty("EXTENSIONS_INDEX");
             VOICEMAIL_INDEX = prop.getProperty("VOICEMAIL_INDEX");
