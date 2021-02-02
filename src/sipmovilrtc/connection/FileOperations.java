@@ -461,6 +461,7 @@ public class FileOperations {
                     Boolean data_input = params.getBoolean("data_input");
                     String action = params.getString("action");
                     Boolean call_extension = params.getBoolean("call_extension");
+                    String valid_options = params.getString("valid_options");
                     String company_directory = COMPANY_DIRECTORY+context+"/";
                     // creacion de la extension para el ivr
                     String extensions_file = company_directory + EXTENSIONS_FILE;
@@ -473,7 +474,7 @@ public class FileOperations {
                     String audio_path = company_directory + AUDIO_FOLDER + audio_name;
                     Ivrs.createOrUpdateIVR(ivrSlug, audio_path, ivr_name, wait_time, 
                         options, timezone, ivr_file, data_input, context, 
-                        action, call_extension);
+                        action, call_extension, valid_options);
                     json.put("response", true);
                     break;
                 } catch (JSONException e) {
@@ -499,6 +500,7 @@ public class FileOperations {
                     Boolean data_input = params.getBoolean("data_input");
                     String action = params.getString("action");
                     Boolean call_extension = params.getBoolean("call_extension");
+                    String valid_options = params.getString("valid_options");
                     String company_directory = COMPANY_DIRECTORY+context+"/";
                     // edicion de la extension para el ivr si se esta usando el dialplan
 //                    if (extension.equals(before_extension) == false) {
@@ -512,7 +514,7 @@ public class FileOperations {
                     String audio_path = company_directory + AUDIO_FOLDER + audio_name;
                     Ivrs.createOrUpdateIVR(ivrSlug, audio_path, ivr_name, wait_time, 
                             options, timezone, ivr_file, data_input, context, 
-                            action, call_extension);
+                            action, call_extension, valid_options);
                     json.put("response", true);
                     break;
                 } catch (JSONException e) {

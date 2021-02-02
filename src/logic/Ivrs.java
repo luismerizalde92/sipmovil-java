@@ -31,7 +31,8 @@ public class Ivrs {
     
     public static boolean createOrUpdateIVR(String slugName, String audioPath, String ivrName, 
             String waitTime, String options, String timezone, String ivrFile,
-            Boolean data_input, String context, String action, Boolean call_extension) throws IOException{
+            Boolean data_input, String context, String action, Boolean call_extension,
+            String validOptions) throws IOException{
         
         System.out.println("from Ivrs.createOrUpdateIVR in file ");
         LOGGER.info("From Ivrs.createOrUpdateIVR");
@@ -53,7 +54,13 @@ public class Ivrs {
         extensionArray.add("same => n(begin),Answer");
         if (data_input == true){
             extensionArray.add("same => n(loop),Read(EXTENSION,"+audioPath+",3,,,"+waitTime+")");
-            extensionArray.add("same => n,Gotoif($[“${EXTENSION}”==””]?invalid)");
+            extensionArray.add("same => n,Gotoif($[\"${EXTENSION}\"==\"\"]?timeout,1:check-extension)");
+            extensionArray.add("same => n,Verbose(the extension length ${LEN(${EXTENSION})})");
+            extensionArray.add("same => n(check-extension),Gotoif($[${LEN(${EXTENSION})}==3]?internal-extension:check-menu)");
+            extensionArray.add("same => n(check-menu),Gotoif($[${LEN(${EXTENSION})}==1]?check-option:h,1)");
+            extensionArray.add("same => n(check-option),SET(IS_VALID=${REGEX(\""+validOptions+"\" ${EXTENSION})})");
+            extensionArray.add("same => n,Gotoif($[${IS_VALID}==1]?internal-extension:invalid,1)");
+            extensionArray.add("same => n(internal-extension),Goto(${EXTENSION},1)");
             extensionArray.add("same => n,Goto(${EXTENSION},1)");
             extensionArray.add("same => n(continue),Hangup");
             if (call_extension == true) {
@@ -65,8 +72,10 @@ public class Ivrs {
                 String key = element.get("key").getAsString();
                 String dial = element.get("dial").getAsString();
                 String overflow_type = element.get("overflow_type").getAsString();
-                if (key.contains("i")) {
-                    extensionArray.add("exten => "+key+"(invalid),1,NoOp(Pressed "+key+")");
+                if (key.equals("i")) {
+                    extensionArray.add("exten => invalid,1,NoOp(An invalid optionwas choosen)");
+                }else if(key.equals("t")){
+                    extensionArray.add("exten => timeout,1,NoOp(The time to input option finished)");     
                 }else{
                     extensionArray.add("exten => "+key+",1,NoOp(Pressed "+key+")");
                 }
