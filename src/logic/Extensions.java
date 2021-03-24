@@ -139,7 +139,7 @@ public class Extensions {
             out.println("same => n,Stasis(change-app,${CONTEXT},${EXTEN})");
             out.println("same => n,Hangup()");
             out.println("\n");
-            out.println("exten => _X.,1,Verbose(Enter to sipmovil bridge stasis inbound)");
+            out.println("exten => _[+0-9].,1,Verbose(Enter to sipmovil bridge stasis inbound)");
             out.println("same => n,Verbose(call from ${CDR(src)} to extension ${EXTEN})");
             out.println("same => n,Stasis(sipmovil-router,${CONTEXT},${CDR(src)},${EXTEN})");
             out.println("same => n(ivr),Verbose(Enter to extension type IVR, the value of SIPMOVIL_DST: ${SIPMOVIL_DST})");
