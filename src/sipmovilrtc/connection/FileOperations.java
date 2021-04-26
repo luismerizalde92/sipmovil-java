@@ -326,7 +326,7 @@ public class FileOperations {
                     
                     String pjsip_file = company_directory + PJSIP_FILE;
                     String parameter = "callerid";
-                    String value = userName+" <"+new_extension+">";
+                    String value = new_extension +" ;"+userName;
                     boolean ret = Accounts.changeParameter(account, parameter, value, pjsip_file);
                     json.put("response", ret);
                     break;

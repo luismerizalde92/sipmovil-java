@@ -210,7 +210,7 @@ public class Accounts {
             out.println("direct_media=yes");
             out.println("disable_direct_media_on_nat=yes");
             out.println("force_rport=yes");
-            out.println("callerid="+userName+" <"+extension+">");
+            out.println("callerid="+extension+" ; "+userName);
             out.println("trust_id_inbound=yes");
             out.println("trust_id_outbound=yes\n");
         } catch (IOException e) {
