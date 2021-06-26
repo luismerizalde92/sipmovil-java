@@ -248,6 +248,8 @@ public class FileOperations {
                     // Creación del directorio para una nueva empresa
                     String company_directory = COMPANY_DIRECTORY+context_name+"/";
                     Runtime.getRuntime().exec("mkdir " + company_directory);
+                    Runtime.getRuntime().exec("sudo chown "+ftp_user+":"+ftp_user+" "+ company_directory);
+                    Runtime.getRuntime().exec("sudo chmod a+rwx "+company_directory);
                     // creacion del directorio para almacenar los srchivos de audio
                     String audio_folder = company_directory + AUDIO_FOLDER;
                     Runtime.getRuntime().exec("mkdir " + audio_folder);
@@ -309,12 +311,11 @@ public class FileOperations {
                 System.out.println("FileOperation: EDIT_EXTENSION");
                 logger.info("FileOperation: EDIT_EXTENSION");
                 try {
-                    String old_extension = params.getString("old_extension"); 
                     String new_extension = params.getString("new_extension");
                     String context_name = params.getString("context_name");
-                    String time_ring = params.getString("time_ring");
                     String account = params.getString("account");
                     String userName = params.getString("user_name");
+                    String max_contacts = params.getString("max_contacts");
 //                    String codecs = params.getString("codecs");
 
                     String company_directory = COMPANY_DIRECTORY+context_name+"/";
@@ -328,6 +329,7 @@ public class FileOperations {
                     String parameter = "callerid";
                     String value = new_extension +" ;"+userName;
                     boolean ret = Accounts.changeParameter(account, parameter, value, pjsip_file);
+                    ret = Accounts.changeParameter(account, "max_contacts", max_contacts, pjsip_file);
                     json.put("response", ret);
                     break;
                 } catch (Exception e) {

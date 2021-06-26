@@ -77,7 +77,7 @@ public class Ivrs {
                 }else if(key.equals("t")){
                     extensionArray.add("exten => timeout,1,NoOp(The time to input option finished)");     
                 }else{
-                    extensionArray.add("exten => "+key+",1,NoOp(Pressed "+key+")");
+                    extensionArray.add("exten => "+key+",1,Set(IVR_DMTF=${EXTEN})");
                 }
 //                            tempArray.add("exten => "+key+",1,NoOp(Pressed "+key+")");
                 extensionArray.add(dial);
@@ -187,6 +187,8 @@ public class Ivrs {
         Gson gson = new Gson();
         JsonArray timezoneArray = gson.fromJson(timezone, JsonArray.class);
         ArrayList<String> tempArray = new ArrayList<>();
+        String overflowString = "";
+        
         try (FileReader fr = new FileReader(ivrFile)) {
             Scanner reader = new Scanner(fr);
             String line;  
@@ -201,6 +203,7 @@ public class Ivrs {
                             
                         }else{
                             if(line.contains("(end-timezone)")){
+                                overflowString = line;
                                 flg = true;
                             }else{
                                 tempArray.add(line);
@@ -211,7 +214,7 @@ public class Ivrs {
                     for (JsonElement pa : timezoneArray) {
                         tempArray.add("same => n,GotoifTime("+pa.getAsString()+"?begin)");
                     }
-                    tempArray.add("same => n,Hangup");
+                    tempArray.add(overflowString);
                 }else{
                     tempArray.add(line);
                 }
