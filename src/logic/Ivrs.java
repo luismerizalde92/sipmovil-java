@@ -43,13 +43,24 @@ public class Ivrs {
 
         extensionArray.add("["+slugName+"]");
         extensionArray.add("exten => s,1,NoOp(Reproduciendo IVR: "+ivrName+")");
+        extensionArray.add("same => n,Verbose(the ivr loop for ${SIPMOVIL_IVR_COUNTER} time)");
+        extensionArray.add("same => n,Gotoif($[${SIPMOVIL_IVR_COUNTER}>=${SIPMOVIL_IVR_MAX_LOOP}]?end-loop:continue-loop)");
+        extensionArray.add("same => n(end-loop),Stasis(sipmovil-bridge,end_ivr_call,${SIPMOVIL_CALL_ID},${SIPMOVIL_CALL_CONTEXT})");
+        extensionArray.add("same => n(continue-loop),Gotoif($[\"${SIPMOVIL_IS_HOLIDAY}\"==\"yes\"]?end-timezone)");
         Integer arraySize = timezoneArray.size();
         if (arraySize > 0) {
             for (int i = 0; i < arraySize-1; i++) {
                 String element = timezoneArray.get(i).getAsString();
                 extensionArray.add("same => n,GotoifTime("+element+"?begin)");
             }
-            extensionArray.add(timezoneArray.get(arraySize-1).getAsString());
+            String overflowTimezone = timezoneArray.get(arraySize-1).getAsString();
+            if (overflowTimezone.contains(slugName)) {
+                extensionArray.add("same => n(end-timezone),Set(SIPMOVIL_IVR_COUNTER=$[${SIPMOVIL_IVR_COUNTER} + 1])");
+                extensionArray.add(overflowTimezone.replace("(end-timezone)",""));
+            } else {
+                extensionArray.add(overflowTimezone);
+            }            
+            
         }
         extensionArray.add("same => n(begin),Answer");
         if (data_input == true){
@@ -73,13 +84,16 @@ public class Ivrs {
                 String dial = element.get("dial").getAsString();
                 String overflow_type = element.get("overflow_type").getAsString();
                 if (key.equals("i")) {
-                    extensionArray.add("exten => invalid,1,NoOp(An invalid optionwas choosen)");
+                    extensionArray.add("exten => invalid,1,NoOp(An invalid optionwas choosen)");                                        
                 }else if(key.equals("t")){
-                    extensionArray.add("exten => timeout,1,NoOp(The time to input option finished)");     
+                    extensionArray.add("exten => timeout,1,NoOp(The time to input option finished)");   
                 }else{
                     extensionArray.add("exten => "+key+",1,Set(IVR_DMTF=${EXTEN})");
                 }
-//                            tempArray.add("exten => "+key+",1,NoOp(Pressed "+key+")");
+                // agregar contador de desbordes si desborda al mismo ivr
+                if (dial.contains(slugName)) {
+                    extensionArray.add("same => n,Set(SIPMOVIL_IVR_COUNTER=$[${SIPMOVIL_IVR_COUNTER} + 1])");
+                }
                 extensionArray.add(dial);
                 if (overflow_type.equals("PLAY_AUDIO")){
                     extensionArray.add("same => n,Hangup");
@@ -87,6 +101,10 @@ public class Ivrs {
             }
         }else{
             extensionArray.add("same => n(loop),Playback("+audioPath+")");
+            // agregar contador de desbordes si desborda al mismo ivr
+            if (action.contains(slugName)) {
+                extensionArray.add("same => n,Set(SIPMOVIL_IVR_COUNTER=$[${SIPMOVIL_IVR_COUNTER} + 1])");
+            }
             extensionArray.add(action);
         }
         

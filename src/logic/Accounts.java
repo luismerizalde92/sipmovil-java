@@ -206,13 +206,19 @@ public class Accounts {
             out.println("auth="+account);
             out.println("max_audio_streams=10");
             out.println("max_video_streams=10");
+            // Debe esta en yes para que funcione en el softphone web del pbx
             out.println("webrtc=yes");
-            out.println("direct_media=yes");
+            out.println("direct_media=no");
             out.println("disable_direct_media_on_nat=yes");
             out.println("force_rport=yes");
             out.println("callerid="+extension+" ; "+userName);
             out.println("trust_id_inbound=yes");
-            out.println("trust_id_outbound=yes\n");
+            out.println("trust_id_outbound=yes");
+            // Sin este parametro se escuchan multiples timbres en el ringback (telefono IP)
+            out.println("ice_support=yes");
+            // Este parametro permirio comunicación en ambos sentidos en telefono IP
+            out.println("rtp_symmetric=yes");
+            out.println("rewrite_contact=yes\n");
         } catch (IOException e) {
             System.out.println(Arrays.toString(e.getStackTrace()));
             LOGGER.fatal(Arrays.toString(e.getStackTrace()));
